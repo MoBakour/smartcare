@@ -1,28 +1,28 @@
-# Wound Infection Monitoring Model
-# This model predicts whether a wound is infected based on various measurements
+# Wound Healing Time Prediction Model
+# This model predicts the healing time of wounds based on various features
 
 import os
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.linear_model import LinearRegression
 import joblib
 
-class WoundMonitoringPredictor:
+class WoundHealingPredictor:
     def __init__(self):
         self.model = None
         self.preprocessor = None
-        self.model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_monitoring_model.pkl')
-        self.preprocessor_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_monitoring_preprocessor.pkl')
-        self.numerical_features = ['Wound Temperature', 'Wound pH', 'Moisture Level', 'Drug Release']
-        self.categorical_features = []
-        self.feature_columns = self.numerical_features + self.categorical_features
-    
+        self.model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'wound_healing_model.pkl')
+        self.preprocessor_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'wound_healing_preprocessor.pkl')
+        self.categorical_features = ['Wound Type', 'Location', 'Severity', 'Infected', 'Treatment']
+        self.numerical_features = ['Patient Age', 'Size']
+        self.feature_columns = self.categorical_features + self.numerical_features
+        
     def load_data(self, data_path, nrows=1000):
         """Load the wound healing dataset"""
         try:
@@ -34,22 +34,19 @@ class WoundMonitoringPredictor:
         except Exception as e:
             print(f"Error loading data: {e}")
             return None
-    
+            
     def preprocess_data(self, data):
-        """Preprocess the data for model training"""        
-        # Encoding categorical features - target is binary (Yes/No)
-        data['Infection_Encoded'] = data['Infection'].map({'No': 0, 'Yes': 1})
-        
-        # Select features and target
+        """Preprocess the data for model training"""
+        # Separate features and target
         X = data[self.feature_columns]
-        y = data['Infection_Encoded']
+        y = data['Output']
         
         # Create preprocessing pipeline
         numerical_transformer = Pipeline(steps=[
             ('scaler', StandardScaler())
         ])
-        
-        # Even though we don't have categorical features now, we're setting up the architecture for future
+
+        # Categorical features are one-hot encoded
         categorical_transformer = Pipeline(steps=[
             ('onehot', OneHotEncoder(handle_unknown='ignore'))
         ])
@@ -58,21 +55,21 @@ class WoundMonitoringPredictor:
         self.preprocessor = ColumnTransformer(
             transformers=[
                 ('num', numerical_transformer, self.numerical_features),
-                ('cat', categorical_transformer, self.categorical_features)
+                ('cat', categorical_transformer, self.categorical_features),
             ])
         
-        # Split the data
+        # Split data into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         
         return X_train, X_test, y_train, y_test
     
     def train_model(self, X_train, y_train):
-        """Train the wound infection prediction model"""
+        """Train the wound healing prediction model"""
         # Create a pipeline with preprocessing and model
         models = {
-            'RandomForest': RandomForestClassifier(random_state=42),
-            'GradientBoosting': GradientBoostingClassifier(random_state=42),
-            'LogisticRegression': LogisticRegression(random_state=42, max_iter=1000)
+            'RandomForest': RandomForestRegressor(random_state=42),
+            'GradientBoosting': GradientBoostingRegressor(random_state=42),
+            'LinearRegression': LinearRegression()
         }
         
         best_model = None
@@ -99,31 +96,29 @@ class WoundMonitoringPredictor:
                     'model__n_estimators': [50, 100],
                     'model__learning_rate': [0.01, 0.1]
                 }
-            else:  # LogisticRegression
-                param_grid = {
-                    'model__C': [0.1, 1.0, 10.0]
-                }
+            else:  # LinearRegression
+                param_grid = {}
             
             # Use GridSearchCV to find best parameters
             if param_grid:
-                grid_search = GridSearchCV(pipeline, param_grid, cv=5, scoring='accuracy')
+                grid_search = GridSearchCV(pipeline, param_grid, cv=5, scoring='neg_mean_squared_error')
                 grid_search.fit(X_train, y_train)
                 pipeline = grid_search.best_estimator_
                 best_params = grid_search.best_params_
-                score = grid_search.best_score_
+                score = -grid_search.best_score_  # Convert back to positive MSE
                 print(f"{name} best parameters: {best_params}")
             else:
                 pipeline.fit(X_train, y_train)
-                score = accuracy_score(y_train, pipeline.predict(X_train))
+                score = mean_squared_error(y_train, pipeline.predict(X_train))
             
-            print(f"{name} training accuracy: {score:.4f}")
+            print(f"{name} training MSE: {score:.4f}")
             
-            if best_model is None or score > best_score:
+            if best_model is None or score < best_score:
                 best_model = pipeline
                 best_score = score
                 best_model_name = name
         
-        print(f"\nBest model: {best_model_name} with accuracy: {best_score:.4f}")
+        print(f"\nBest model: {best_model_name} with MSE: {best_score:.4f}")
         self.model = best_model
         return self.model
     
@@ -136,14 +131,16 @@ class WoundMonitoringPredictor:
         y_pred = self.model.predict(X_test)
         
         # Calculate evaluation metrics
-        accuracy = accuracy_score(y_test, y_pred)
-        print(f"Model Accuracy: {accuracy:.4f}")
-        print("Classification Report:")
-        print(classification_report(y_test, y_pred))
-        print("Confusion Matrix:")
-        print(confusion_matrix(y_test, y_pred))
+        mse = mean_squared_error(y_test, y_pred)
+        mae = mean_absolute_error(y_test, y_pred)
+        r2 = r2_score(y_test, y_pred)
         
-        return accuracy
+        print("\nModel Evaluation Metrics:")
+        print(f"Mean Squared Error: {mse:.4f}")
+        print(f"Mean Absolute Error: {mae:.4f}")
+        print(f"R² Score: {r2:.4f}")
+        
+        return mse, mae, r2
     
     def get_model(self):
         """Load saved model and preprocessor from files if they exist, 
@@ -170,9 +167,8 @@ class WoundMonitoringPredictor:
                 # Continue to training below
         
         # If we get here, either the model doesn't exist or loading failed
-        # Load and prepare data
-        datasets_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets')
-        data_path = os.path.join(datasets_dir, 'Synthetic_Wound_Healing_Data.csv')
+        datasets_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'datasets')
+        data_path = os.path.join(datasets_dir, 'Synthetic_Wound_Healing_Time_Data.csv')
         data = self.load_data(data_path)
         if data is None:
             return False
@@ -199,18 +195,24 @@ class WoundMonitoringPredictor:
             return False
     
     def predict(self, wound_features):
-        """Make a prediction for wound infection
+        """Make a prediction for wound healing time
         
         Parameters:
-        wound_features: dict with keys matching self.feature_columns
+        wound_features: dict with keys:
+            - 'Wound Type': str
+            - 'Location': str
+            - 'Severity': str
+            - 'Infected': str
+            - 'Patient Age': int
+            - 'Size': float
+            - 'Treatment': str
         
         Returns:
-        prediction: int - 0 (No infection) or 1 (Infection)
-        probability: float - Probability of infection
+        predicted_days: float - predicted healing time in days
         """
         if self.model is None:
             print("Model has not been trained or loaded yet")
-            return None, None
+            return None
         
         try:
             # Convert input dictionary to DataFrame
@@ -224,23 +226,22 @@ class WoundMonitoringPredictor:
             
             # Extract only the relevant features in the correct order
             input_features = input_df[self.feature_columns]
-            
-            # Make prediction using the pipeline
+
+            # Make prediction
             prediction = self.model.predict(input_features)[0]
-            probability = self.model.predict_proba(input_features)[0][1]  # Probability of class 1 (infected)
-            
-            return prediction, probability
+
+            return prediction
         except Exception as e:
             print(f"Error making prediction: {e}")
-            return None, None
-    
+            return None
+        
     def get_feature_columns(self):
-        """Return the feature columns required for prediction"""
+        """Get the feature columns used for training the model"""
         return self.feature_columns
 
 def train_and_save_model():
     """Train the model and save it to disk"""
-    predictor = WoundMonitoringPredictor()
+    predictor = WoundHealingPredictor()
     
     # Get or train model
     if not predictor.get_model():
@@ -251,18 +252,21 @@ def train_and_save_model():
     
     # Example prediction
     example = {
-        'Wound Temperature': 37.8,
-        'Wound pH': 6.8,
-        'Moisture Level': 75,
-        'Drug Release': 15
+        'Wound Type': 'Burn',
+        'Location': 'Arm',
+        'Severity': 'Moderate',
+        'Infected': 'Yes',
+        'Patient Age': 45,
+        'Size': 12.5,
+        'Treatment': 'Antibiotics (Oral)'
     }
     
-    prediction, probability = predictor.predict(example)
-    if prediction is not None:
+    predicted_days = predictor.predict(example)
+    if predicted_days is not None:
         print(f"\nExample Prediction:")
-        print(f"For wound measurements: {example}")
-        print(f"Infection prediction: {'Yes' if prediction == 1 else 'No'}")
-        print(f"Infection probability: {probability:.2f}")
+        print(f"For a {example['Severity']} {example['Wound Type']} on the {example['Location']}, " + 
+              f"{example['Size']} cm², {example['Infected']} infection, {example['Patient Age']} year old patient:")
+        print(f"Predicted healing time: {predicted_days:.1f} days")
 
 if __name__ == "__main__":
     train_and_save_model()

@@ -3,7 +3,7 @@ from routes.prediction_routes import prediction_bp, initialize_models
 
 app = Flask(__name__)
 
-app.register_blueprint(prediction_bp, url_prefix='/api')
+app.register_blueprint(prediction_bp)
 
 if __name__ == '__main__':
     initialize_models()

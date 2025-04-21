@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from wound_monitoring.wound_monitoring import WoundMonitoringPredictor
-from wound_healing_prediction.wound_healing_prediction import WoundHealingPredictor
+from wound_monitoring import WoundMonitoringPredictor
+from wound_healing_prediction import WoundHealingPredictor
 
 prediction_bp = Blueprint('prediction', __name__)
 

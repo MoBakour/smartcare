@@ -17,8 +17,8 @@ class WoundMonitoringPredictor:
     def __init__(self):
         self.model = None
         self.preprocessor = None
-        self.model_path = 'model.pkl'
-        self.preprocessor_path = 'preprocessor.pkl'
+        self.model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_monitoring_model.pkl')
+        self.preprocessor_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_monitoring_preprocessor.pkl')
         self.numerical_features = ['Wound Temperature', 'Wound pH', 'Moisture Level', 'Drug Release']
         self.categorical_features = []
         self.feature_columns = self.numerical_features + self.categorical_features
@@ -152,17 +152,17 @@ class WoundMonitoringPredictor:
         Returns:
         bool - True if model is loaded/trained successfully, False otherwise
         """
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        model_path = os.path.join(current_dir, self.model_path)
-        preprocessor_path = os.path.join(current_dir, self.preprocessor_path)
+        # Ensure models directory exists
+        models_dir = os.path.dirname(self.model_path)
+        os.makedirs(models_dir, exist_ok=True)
         
         # Check if model exists
-        if os.path.exists(model_path) and os.path.exists(preprocessor_path):
+        if os.path.exists(self.model_path) and os.path.exists(self.preprocessor_path):
             try:
-                self.model = joblib.load(model_path)
-                self.preprocessor = joblib.load(preprocessor_path)
-                print(f"Model loaded from {model_path}")
-                print(f"Preprocessor loaded from {preprocessor_path}")
+                self.model = joblib.load(self.model_path)
+                self.preprocessor = joblib.load(self.preprocessor_path)
+                print(f"Model loaded from {self.model_path}")
+                print(f"Preprocessor loaded from {self.preprocessor_path}")
                 return True
             except Exception as e:
                 print(f"Error loading model: {e}")
@@ -171,7 +171,8 @@ class WoundMonitoringPredictor:
         
         # If we get here, either the model doesn't exist or loading failed
         # Load and prepare data
-        data_path = os.path.join(current_dir, 'Synthetic_Wound_Healing_Data.csv')
+        datasets_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets')
+        data_path = os.path.join(datasets_dir, 'Synthetic_Wound_Healing_Data.csv')
         data = self.load_data(data_path)
         if data is None:
             return False
@@ -187,11 +188,11 @@ class WoundMonitoringPredictor:
         
         # Save model
         try:
-            joblib.dump(self.model, model_path)
-            joblib.dump(self.preprocessor, preprocessor_path)
+            joblib.dump(self.model, self.model_path)
+            joblib.dump(self.preprocessor, self.preprocessor_path)
             
-            print(f"Model saved to {model_path}")
-            print(f"Preprocessor saved to {preprocessor_path}")
+            print(f"Model saved to {self.model_path}")
+            print(f"Preprocessor saved to {self.preprocessor_path}")
             return True
         except Exception as e:
             print(f"Error saving model: {e}")

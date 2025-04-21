@@ -1,0 +1,162 @@
+# SmartCare Wound API Tests
+# Use REST Client extension in VS Code to run these requests
+
+### =====================================================
+### INFECTION PREDICTION TESTS
+### =====================================================
+
+### Test Infection Prediction - Normal Wound Condition (Expected: No Infection)
+# Parameters indicate normal healing process
+POST http://localhost:5000/predict/infection
+Content-Type: application/json
+
+{
+    "Wound Temperature": 37.2,
+    "Wound pH": 7.1,
+    "Moisture Level": 70.5,
+    "Drug Release": 15.3
+}
+
+### Test Infection Prediction - Mild Issue (Expected: Low Probability of Infection)
+# Parameters indicate minor inflammation
+POST http://localhost:5000/predict/infection
+Content-Type: application/json
+
+{
+    "Wound Temperature": 38.2,
+    "Wound pH": 6.59,
+    "Moisture Level": 67.8,
+    "Drug Release": 19.7
+}
+
+### Test Infection Prediction - Potential Infection (Expected: Yes Infection)
+# Parameters indicate potential infection
+POST http://localhost:5000/predict/infection
+Content-Type: application/json
+
+{
+    "Wound Temperature": 39.5,
+    "Wound pH": 5.84,
+    "Moisture Level": 58.4,
+    "Drug Release": 36.1
+}
+
+### Test Infection Prediction - Severe Condition (Expected: High Probability of Infection)
+# Parameters indicate likely infection
+POST http://localhost:5000/predict/infection
+Content-Type: application/json
+
+{
+    "Wound Temperature": 40.2,
+    "Wound pH": 5.2,
+    "Moisture Level": 45.0,
+    "Drug Release": 65.3
+}
+
+### =====================================================
+### HEALING TIME PREDICTION TESTS
+### =====================================================
+
+### Test Healing Prediction - Minor Wound (Expected: Fast Healing)
+# Parameters indicate quick healing time
+POST http://localhost:5000/predict/healing
+Content-Type: application/json
+
+{
+    "Wound Type": "Abrasion",
+    "Location": "Forearm",
+    "Severity": "Mild",
+    "Infected": "No",
+    "Patient Age": 25,
+    "Size": 4.8,
+    "Treatment": "Standard Dressing"
+}
+
+### Test Healing Prediction - Moderate Wound (Expected: Medium Healing Time)
+# Parameters indicate average healing time
+POST http://localhost:5000/predict/healing
+Content-Type: application/json
+
+{
+    "Wound Type": "Laceration",
+    "Location": "Leg",
+    "Severity": "Moderate",
+    "Infected": "No",
+    "Patient Age": 42,
+    "Size": 12.5,
+    "Treatment": "Sutures"
+}
+
+### Test Healing Prediction - Infected Wound (Expected: Longer Healing Time)
+# Parameters indicate delayed healing due to infection
+POST http://localhost:5000/predict/healing
+Content-Type: application/json
+
+{
+    "Wound Type": "Laceration",
+    "Location": "Foot",
+    "Severity": "Moderate",
+    "Infected": "Yes",
+    "Patient Age": 45,
+    "Size": 10.2,
+    "Treatment": "Antibiotics (Oral)"
+}
+
+### Test Healing Prediction - Severe Wound (Expected: Long Healing Time)
+# Parameters indicate prolonged healing period
+POST http://localhost:5000/predict/healing
+Content-Type: application/json
+
+{
+    "Wound Type": "Burn",
+    "Location": "Torso",
+    "Severity": "Severe",
+    "Infected": "Yes",
+    "Patient Age": 68,
+    "Size": 78.5,
+    "Treatment": "Skin Graft"
+}
+
+### Test Healing Prediction - Diabetic Elderly Patient (Expected: Very Long Healing Time)
+# Parameters indicate highest complexity case
+POST http://localhost:5000/predict/healing
+Content-Type: application/json
+
+{
+    "Wound Type": "Pressure Ulcer",
+    "Location": "Sacrum",
+    "Severity": "Severe",
+    "Infected": "Yes",
+    "Patient Age": 82,
+    "Size": 45.3,
+    "Treatment": "Negative Pressure Wound Therapy"
+}
+
+### =====================================================
+### ERROR TESTING
+### =====================================================
+
+### Test Missing Parameter for Infection Model
+POST http://localhost:5000/predict/infection
+Content-Type: application/json
+
+{
+    "Wound Temperature": 39.5,
+    "Wound pH": 5.84,
+    "Moisture Level": 58.4
+    # Missing Drug Release parameter
+}
+
+### Test Missing Parameter for Healing Model
+POST http://localhost:5000/predict/healing
+Content-Type: application/json
+
+{
+    "Wound Type": "Laceration",
+    "Location": "Leg",
+    "Severity": "Moderate",
+    "Patient Age": 42,
+    "Size": 12.5,
+    "Treatment": "Sutures"
+    # Missing Infected parameter
+}

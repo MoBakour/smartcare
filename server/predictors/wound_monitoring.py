@@ -17,8 +17,8 @@ class WoundMonitoringPredictor:
     def __init__(self):
         self.model = None
         self.preprocessor = None
-        self.model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'wound_monitoring_model.pkl')
-        self.preprocessor_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'wound_monitoring_preprocessor.pkl')
+        self.model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_monitoring_model.pkl')
+        self.preprocessor_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_monitoring_preprocessor.pkl')
         self.numerical_features = ['Wound Temperature', 'Wound pH', 'Moisture Level', 'Drug Release']
         self.categorical_features = []
         self.feature_columns = self.numerical_features + self.categorical_features
@@ -170,7 +170,7 @@ class WoundMonitoringPredictor:
                 # Continue to training below
         
         # If we get here, either the model doesn't exist or loading failed
-        datasets_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'datasets')
+        datasets_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets')
         data_path = os.path.join(datasets_dir, 'Synthetic_Wound_Healing_Data.csv')
         data = self.load_data(data_path)
         if data is None:

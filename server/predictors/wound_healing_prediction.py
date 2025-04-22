@@ -17,8 +17,8 @@ class WoundHealingPredictor:
     def __init__(self):
         self.model = None
         self.preprocessor = None
-        self.model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'wound_healing_model.pkl')
-        self.preprocessor_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'wound_healing_preprocessor.pkl')
+        self.model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_healing_model.pkl')
+        self.preprocessor_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_healing_preprocessor.pkl')
         self.categorical_features = ['Wound Type', 'Location', 'Severity', 'Infected', 'Treatment']
         self.numerical_features = ['Patient Age', 'Size']
         self.feature_columns = self.categorical_features + self.numerical_features
@@ -167,7 +167,7 @@ class WoundHealingPredictor:
                 # Continue to training below
         
         # If we get here, either the model doesn't exist or loading failed
-        datasets_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'datasets')
+        datasets_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets')
         data_path = os.path.join(datasets_dir, 'Synthetic_Wound_Healing_Time_Data.csv')
         data = self.load_data(data_path)
         if data is None:

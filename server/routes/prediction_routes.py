@@ -31,7 +31,7 @@ def initialize_models():
         
     return True
 
-@prediction_bp.route('/predict/infection', methods=['POST'])
+@prediction_bp.route('/infection', methods=['POST'])
 def predict_infection():
     global infection_predictor
     
@@ -69,7 +69,7 @@ def predict_infection():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@prediction_bp.route('/predict/healing', methods=['POST'])
+@prediction_bp.route('/healing', methods=['POST'])
 def predict_healing():
     global healing_predictor
     
@@ -106,7 +106,5 @@ def predict_healing():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@prediction_bp.route('/health', methods=['GET'])
-def health_check():
-    return jsonify({'status': 'ok'})
+
 

@@ -15,18 +15,21 @@ import joblib
 
 class WoundHealingPredictor:
     def __init__(self):
+        self.dataset_name = "Synthetic_Wound_Healing_Time_Data.csv"
+        self.dataset_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets', self.dataset_name)
         self.model = None
         self.preprocessor = None
         self.model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_healing_model.pkl')
         self.preprocessor_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_healing_preprocessor.pkl')
         self.categorical_features = ['Wound Type', 'Location', 'Severity', 'Infected', 'Treatment']
         self.numerical_features = ['Patient Age', 'Size']
-        self.feature_columns = self.categorical_features + self.numerical_features
-        
-    def load_data(self, data_path, nrows=1000):
+        self.prediction_features = self.categorical_features + self.numerical_features
+        self.target_feature = 'Output'
+
+    def load_data(self, dataset_path, nrows=1000):
         """Load the wound healing dataset"""
         try:
-            data = pd.read_csv(data_path, nrows=nrows)
+            data = pd.read_csv(dataset_path, nrows=nrows)
             print(f"Data loaded successfully. Shape: {data.shape}")
             print(f"Data columns: {data.columns.tolist()}")
             print(data.head())
@@ -38,8 +41,8 @@ class WoundHealingPredictor:
     def preprocess_data(self, data):
         """Preprocess the data for model training"""
         # Separate features and target
-        X = data[self.feature_columns]
-        y = data['Output']
+        X = data[self.prediction_features]
+        y = data[self.target_feature]
         
         # Create preprocessing pipeline
         numerical_transformer = Pipeline(steps=[
@@ -167,9 +170,7 @@ class WoundHealingPredictor:
                 # Continue to training below
         
         # If we get here, either the model doesn't exist or loading failed
-        datasets_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets')
-        data_path = os.path.join(datasets_dir, 'Synthetic_Wound_Healing_Time_Data.csv')
-        data = self.load_data(data_path)
+        data = self.load_data(self.dataset_path)
         if data is None:
             return False
         
@@ -219,13 +220,13 @@ class WoundHealingPredictor:
             input_df = pd.DataFrame([wound_features])
             
             # Ensure we have all required features
-            for feature in self.feature_columns:
+            for feature in self.prediction_features:
                 if feature not in input_df.columns:
                     print(f"Missing feature: {feature}")
                     return None, None
             
             # Extract only the relevant features in the correct order
-            input_features = input_df[self.feature_columns]
+            input_features = input_df[self.prediction_features]
 
             # Make prediction
             prediction = self.model.predict(input_features)[0]
@@ -235,9 +236,9 @@ class WoundHealingPredictor:
             print(f"Error making prediction: {e}")
             return None
         
-    def get_feature_columns(self):
+    def get_prediction_features(self):
         """Get the feature columns used for training the model"""
-        return self.feature_columns
+        return self.prediction_features
 
 def train_and_save_model():
     """Train the model and save it to disk"""

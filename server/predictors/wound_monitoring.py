@@ -15,18 +15,21 @@ import joblib
 
 class WoundMonitoringPredictor:
     def __init__(self):
+        self.dataset_name = "Synthetic_Wound_Healing_Data.csv"
+        self.dataset_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets', self.dataset_name)
         self.model = None
         self.preprocessor = None
         self.model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_monitoring_model.pkl')
         self.preprocessor_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'models', 'wound_monitoring_preprocessor.pkl')
         self.numerical_features = ['Wound Temperature', 'Wound pH', 'Moisture Level', 'Drug Release']
         self.categorical_features = []
-        self.feature_columns = self.numerical_features + self.categorical_features
+        self.prediction_features = self.numerical_features + self.categorical_features
+        self.target_feature = 'Infection_Encoded'
     
-    def load_data(self, data_path, nrows=1000):
+    def load_data(self, dataset_path, nrows=1000):
         """Load the wound healing dataset"""
         try:
-            data = pd.read_csv(data_path, nrows=nrows)
+            data = pd.read_csv(dataset_path, nrows=nrows)
             print(f"Data loaded successfully. Shape: {data.shape}")
             print(f"Data columns: {data.columns.tolist()}")
             print(data.head())
@@ -41,8 +44,8 @@ class WoundMonitoringPredictor:
         data['Infection_Encoded'] = data['Infection'].map({'No': 0, 'Yes': 1})
         
         # Select features and target
-        X = data[self.feature_columns]
-        y = data['Infection_Encoded']
+        X = data[self.prediction_features]
+        y = data[self.target_feature]
         
         # Create preprocessing pipeline
         numerical_transformer = Pipeline(steps=[
@@ -170,9 +173,7 @@ class WoundMonitoringPredictor:
                 # Continue to training below
         
         # If we get here, either the model doesn't exist or loading failed
-        datasets_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'datasets')
-        data_path = os.path.join(datasets_dir, 'Synthetic_Wound_Healing_Data.csv')
-        data = self.load_data(data_path)
+        data = self.load_data(self.dataset_path)
         if data is None:
             return False
         
@@ -201,7 +202,7 @@ class WoundMonitoringPredictor:
         """Make a prediction for wound infection
         
         Parameters:
-        wound_features: dict with keys matching self.feature_columns
+        wound_features: dict with keys matching self.prediction_features
         
         Returns:
         prediction: int - 0 (No infection) or 1 (Infection)
@@ -216,13 +217,13 @@ class WoundMonitoringPredictor:
             input_df = pd.DataFrame([wound_features])
             
             # Ensure we have all required features
-            for feature in self.feature_columns:
+            for feature in self.prediction_features:
                 if feature not in input_df.columns:
                     print(f"Missing feature: {feature}")
                     return None, None
             
             # Extract only the relevant features in the correct order
-            input_features = input_df[self.feature_columns]
+            input_features = input_df[self.prediction_features]
             
             # Make prediction using the pipeline
             prediction = self.model.predict(input_features)[0]
@@ -233,9 +234,9 @@ class WoundMonitoringPredictor:
             print(f"Error making prediction: {e}")
             return None, None
     
-    def get_feature_columns(self):
+    def get_prediction_features(self):
         """Return the feature columns required for prediction"""
-        return self.feature_columns
+        return self.prediction_features
 
 def train_and_save_model():
     """Train the model and save it to disk"""

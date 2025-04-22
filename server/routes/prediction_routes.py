@@ -40,14 +40,14 @@ def predict_infection():
         return jsonify({'error': 'Infection model not initialized'}), 500
     
     # Get feature columns from infection_predictor
-    feature_columns = infection_predictor.get_feature_columns()
+    prediction_features = infection_predictor.get_prediction_features()
     
     # Get data from request
     try:
         data = request.get_json()
         
         # Ensure all required features are provided
-        for feature in feature_columns:
+        for feature in prediction_features:
             if feature not in data:
                 return jsonify({'error': f'Missing feature: {feature}'}), 400
         
@@ -78,14 +78,14 @@ def predict_healing():
         return jsonify({'error': 'Wound healing model not initialized'}), 500
     
     # Get feature columns from healing_predictor
-    feature_columns = healing_predictor.get_feature_columns()
+    prediction_features = healing_predictor.get_prediction_features()
     
     # Get data from request
     try:
         data = request.get_json()
         
         # Ensure all required features are provided
-        for feature in feature_columns:
+        for feature in prediction_features:
             if feature not in data:
                 return jsonify({'error': f'Missing feature: {feature}'}), 400
         

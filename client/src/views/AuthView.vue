@@ -1,10 +1,6 @@
 <template>
-    <div class="p-8">
+    <div class="p-4">
         <h1>Authentication</h1>
-        <div>
-            <!-- Authentication form content will go here -->
-            <p>Login and registration functionality</p>
-        </div>
     </div>
 </template>
 

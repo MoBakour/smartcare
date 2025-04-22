@@ -33,8 +33,8 @@ const router = createRouter({
             component: PatientView,
         },
         {
-            path: "/add-patient",
-            name: "add-patient",
+            path: "/new",
+            name: "new",
             component: AddPatientView,
         },
     ],

@@ -1,10 +1,6 @@
 <template>
-    <div class="p-8">
+    <div class="p-4">
         <h1>Settings</h1>
-        <div>
-            <!-- Settings form content will go here -->
-            <p>Application settings and user preferences</p>
-        </div>
     </div>
 </template>
 

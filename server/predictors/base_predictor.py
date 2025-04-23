@@ -1,10 +1,8 @@
-# filepath: c:\Users\user\Desktop\SmartCare\server\predictors\base_predictor.py
 # Base Predictor class for ML models in SmartCare
 # This abstract base class provides common functionality for all predictors
 
 import os
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import accuracy_score, mean_squared_error, mean_squared_error, mean_absolute_error, r2_score, accuracy_score, classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -231,7 +229,7 @@ class BasePredictor:
             # Return metrics
             return mse, mae, r2
 
-    def get_model(self):
+    def get_model(self, models=None, param_grids=None, scoring_metric=None):
         """Load saved model and preprocessor from files if they exist, 
         otherwise train and save a new model
         
@@ -264,7 +262,7 @@ class BasePredictor:
         X_train, X_test, y_train, y_test = self.preprocess_data(data)
         
         # Train model
-        self.train_model(X_train, y_train)
+        self.train_model(X_train, y_train, models, param_grids, scoring_metric)
         
         # Evaluate model
         self.evaluate_model(X_test, y_test)

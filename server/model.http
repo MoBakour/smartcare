@@ -160,3 +160,140 @@ Content-Type: application/json
     "Treatment": "Sutures"
     # Missing Infected parameter
 }
+
+### =====================================================
+### TREATMENT PREDICTION TESTS (UNSEEN TEST DATA)
+### =====================================================
+
+### Test Treatment Prediction - Burn wound with unseen parameters
+# Similar pattern to burns in dataset but with unseen values
+# Expected: "Surgical Debridement" (common for moderate burn with infection)
+POST http://localhost:5000/predict/treatment
+Content-Type: application/json
+
+{
+    "Wound Type": "Burn",
+    "Location": "Neck",
+    "Severity": "Moderate",
+    "Infected": "Yes",
+    "Patient Age": 50,
+    "Size": 13.5
+}
+
+### Test Treatment Prediction - Laceration with unseen parameters
+# Similar pattern to lacerations in dataset but with unseen values
+# Expected: "Antibiotics (Topical)" or "Moist Wound Dressing" (common for mild infected lacerations)
+POST http://localhost:5000/predict/treatment
+Content-Type: application/json
+
+{
+    "Wound Type": "Laceration",
+    "Location": "Face",
+    "Severity": "Mild",
+    "Infected": "Yes",
+    "Patient Age": 45,
+    "Size": 3.2
+}
+
+### Test Treatment Prediction - Puncture with unseen parameters
+# Similar pattern to puncture wounds in dataset but with unseen values
+# Expected: "Antibiotics (Oral)" (common for moderate infected puncture wounds)
+POST http://localhost:5000/predict/treatment
+Content-Type: application/json
+
+{
+    "Wound Type": "Puncture",
+    "Location": "Thigh",
+    "Severity": "Moderate",
+    "Infected": "Yes",
+    "Patient Age": 55,
+    "Size": 15.0
+}
+
+### Test Treatment Prediction - Diabetic Ulcer with unseen parameters
+# Similar pattern to diabetic ulcers in dataset but with unseen values
+# Expected: "Negative Pressure Wound Therapy" or "Surgical Debridement" (common for severe infected diabetic ulcers)
+POST http://localhost:5000/predict/treatment
+Content-Type: application/json
+
+{
+    "Wound Type": "Diabetic Ulcer",
+    "Location": "Ankle",
+    "Severity": "Severe",
+    "Infected": "Yes",
+    "Patient Age": 62,
+    "Size": 28.7
+}
+
+### Test Treatment Prediction - Pressure Ulcer with unseen parameters
+# Similar pattern to pressure ulcers in dataset but with unseen values
+# Expected: "Negative Pressure Wound Therapy" or "Cleaning and Bandage" (common for severe non-infected pressure ulcers)
+POST http://localhost:5000/predict/treatment
+Content-Type: application/json
+
+{
+    "Wound Type": "Pressure Ulcer",
+    "Location": "Hip",
+    "Severity": "Severe",
+    "Infected": "No",
+    "Patient Age": 78,
+    "Size": 45.0
+}
+
+### Test Treatment Prediction - Surgical Wound with unseen parameters
+# Similar pattern to surgical wounds in dataset but with unseen values
+# Expected: "Antibiotics (Topical)" or "Negative Pressure Wound Therapy" (common for moderate infected surgical wounds)
+POST http://localhost:5000/predict/treatment
+Content-Type: application/json
+
+{
+    "Wound Type": "Surgical Wound",
+    "Location": "Abdomen",
+    "Severity": "Moderate",
+    "Infected": "Yes",
+    "Patient Age": 58,
+    "Size": 12.5
+}
+
+### Test Treatment Prediction - Abrasion with unseen parameters
+# Similar pattern to abrasions in dataset but with unseen values
+# Expected: "Antibiotics (Topical)" or "Negative Pressure Wound Therapy" (common for mild non-infected abrasions)
+POST http://localhost:5000/predict/treatment
+Content-Type: application/json
+
+{
+    "Wound Type": "Abrasion",
+    "Location": "Shin",
+    "Severity": "Mild",
+    "Infected": "No",
+    "Patient Age": 27,
+    "Size": 2.1
+}
+
+### Test Treatment Prediction - Ulcer with unseen parameters
+# Similar pattern to ulcers in dataset but with unseen values
+# Expected: "Antibiotics (Oral)" or "Moist Wound Dressing" (common for moderate infected ulcers)
+POST http://localhost:5000/predict/treatment
+Content-Type: application/json
+
+{
+    "Wound Type": "Ulcer",
+    "Location": "Calf",
+    "Severity": "Moderate",
+    "Infected": "Yes",
+    "Patient Age": 69,
+    "Size": 8.7
+}
+
+### Test Treatment Prediction - Error Case - Missing Required Parameter
+# Expected: Error response with details about missing parameter "Severity"
+POST http://localhost:5000/predict/treatment
+Content-Type: application/json
+
+{
+    "Wound Type": "Burn",
+    "Location": "Arm",
+    "Infected": "Yes",
+    "Patient Age": 45,
+    "Size": 12.5
+}

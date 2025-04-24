@@ -4,7 +4,7 @@
 import os
 import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import accuracy_score, mean_squared_error, mean_squared_error, mean_absolute_error, r2_score, accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, mean_squared_error, mean_squared_error, mean_absolute_error, r2_score, accuracy_score, classification_report, confusion_matrix, root_mean_squared_error
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -20,6 +20,7 @@ class BasePredictor:
         numerical_features (list): List of numerical feature column names
         categorical_features (list): List of categorical feature column names
         target_feature (str): Name of target column for prediction
+        is_classification (bool): True if the task is classification, False for regression
         """
         # Dataset info
         self.dataset_name = dataset_name
@@ -41,7 +42,7 @@ class BasePredictor:
         self.preprocessor_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
                                              'models', f'{model_name}_preprocessor.pkl')
     
-    def load_data(self, dataset_path, nrows=1000):
+    def load_data(self, dataset_path, nrows=None):
         """Load the dataset from CSV file
         
         Parameters:
@@ -64,12 +65,12 @@ class BasePredictor:
     def preprocess_data(self, data):
         """Preprocess data
         
+        Parameters:
+        data: (pandas.DataFrame) The input data
+        
         Returns:
         ColumnTransformer: The preprocessing pipeline
         """
-        # Select features and target
-        X = data[self.prediction_features]
-        y = data[self.target_feature]
 
         # Create preprocessing pipeline
         numerical_transformer = Pipeline(steps=[
@@ -87,6 +88,10 @@ class BasePredictor:
                 ('cat', categorical_transformer, self.categorical_features)
             ])
         
+        # Select features and target
+        X = data[self.prediction_features]
+        y = data[self.target_feature]
+
         # Split data into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -198,7 +203,6 @@ class BasePredictor:
         
         # Different evaluation metrics for classification vs regression
         if self.is_classification:
-            
             # Calculate evaluation metrics
             accuracy = accuracy_score(y_test, y_pred)
             report = classification_report(y_test, y_pred, output_dict=True)
@@ -216,25 +220,26 @@ class BasePredictor:
             return accuracy, report, matrix
         else:            
             # Calculate evaluation metrics
-            mse = mean_squared_error(y_test, y_pred)
             mae = mean_absolute_error(y_test, y_pred)
+            mse = mean_squared_error(y_test, y_pred)
+            rmse = root_mean_squared_error(y_test, y_pred)
             r2 = r2_score(y_test, y_pred)
             
             # Print results
             print("\nRegression Model Evaluation:")
-            print(f"Mean Squared Error: {mse:.4f}")
             print(f"Mean Absolute Error: {mae:.4f}")
+            print(f"Mean Squared Error: {mse:.4f}")
+            print(f"Root Mean Squared Error: {rmse:.4f}")
             print(f"R² Score: {r2:.4f}")
             
             # Return metrics
-            return mse, mae, r2
+            return mae, mse, rmse, r2
 
-    def get_model(self, models=None, param_grids=None, scoring_metric=None):
+    def load_model(self, models=None, param_grids=None, scoring_metric=None):
         """Load saved model and preprocessor from files if they exist, 
-        otherwise train and save a new model
-        
+
         Returns:
-        bool - True if model is loaded/trained successfully, False otherwise
+        bool - True if model is loaded successfully, False otherwise
         """
         # Ensure models directory exists
         models_dir = os.path.dirname(self.model_path)
@@ -251,33 +256,9 @@ class BasePredictor:
             except Exception as e:
                 print(f"Error loading model: {e}")
                 print("Will train a new model instead.")
-                # Continue to training below
+                return False
         
-        # If we get here, either the model doesn't exist or loading failed
-        data = self.load_data(self.dataset_path)
-        if data is None:
-            return False
-        
-        # Preprocess data
-        X_train, X_test, y_train, y_test = self.preprocess_data(data)
-        
-        # Train model
-        self.train_model(X_train, y_train, models, param_grids, scoring_metric)
-        
-        # Evaluate model
-        self.evaluate_model(X_test, y_test)
-        
-        # Save model
-        try:
-            joblib.dump(self.model, self.model_path)
-            joblib.dump(self.preprocessor, self.preprocessor_path)
-            
-            print(f"Model saved to {self.model_path}")
-            print(f"Preprocessor saved to {self.preprocessor_path}")
-            return True
-        except Exception as e:
-            print(f"Error saving model: {e}")
-            return False
+        return False
     
     def predict(self, features):
         """Make a prediction based on input features

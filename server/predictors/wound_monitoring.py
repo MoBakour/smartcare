@@ -43,28 +43,9 @@ def get_wound_monitoring_predictor():
             'model__C': [0.1, 1.0, 10.0]
         }
     }
-
-    # Check if model exists and try to load it
-    models_dir = os.path.dirname(predictor.model_path)
-    os.makedirs(models_dir, exist_ok=True)
-    
-    if os.path.exists(predictor.model_path) and os.path.exists(predictor.preprocessor_path):
-        try:
-            predictor.model = joblib.load(predictor.model_path)
-            predictor.preprocessor = joblib.load(predictor.preprocessor_path)
-            print(f"Model loaded from {predictor.model_path}")
-            print(f"Preprocessor loaded from {predictor.preprocessor_path}")
-            print("\nModel loaded successfully.")
-            is_model_loaded = True
-        except Exception as e:
-            print(f"Error loading model: {e}")
-            print("Will train a new model instead.")
-            is_model_loaded = False
-    else:
-        is_model_loaded = False
     
     # If we couldn't load the model, train a new one
-    if not is_model_loaded:
+    if not predictor.load_model():
         # Load data
         data = predictor.load_data(predictor.dataset_path)
         if data is None:

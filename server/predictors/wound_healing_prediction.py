@@ -42,30 +42,11 @@ def get_wound_healing_predictor():
         # LinearRegression has no hyperparameters to tune
         'LinearRegression': {}
     }
-
-    # Check if model exists and try to load it
-    models_dir = os.path.dirname(predictor.model_path)
-    os.makedirs(models_dir, exist_ok=True)
-    
-    if os.path.exists(predictor.model_path) and os.path.exists(predictor.preprocessor_path):
-        try:
-            predictor.model = joblib.load(predictor.model_path)
-            predictor.preprocessor = joblib.load(predictor.preprocessor_path)
-            print(f"Model loaded from {predictor.model_path}")
-            print(f"Preprocessor loaded from {predictor.preprocessor_path}")
-            print("\nModel loaded successfully.")
-            is_model_loaded = True
-        except Exception as e:
-            print(f"Error loading model: {e}")
-            print("Will train a new model instead.")
-            is_model_loaded = False
-    else:
-        is_model_loaded = False
     
     # If we couldn't load the model, train a new one
-    if not is_model_loaded:
+    if not predictor.load_model():
         # Load data
-        data = predictor.load_data(predictor.dataset_path)
+        data = predictor.load_data(predictor.dataset_path, 5000)
         if data is None:
             print("Failed to load data.")
             return

@@ -4,6 +4,8 @@ import PatientsView from "../views/PatientsView.vue";
 import SettingsView from "../views/SettingsView.vue";
 import PatientView from "../views/PatientView.vue";
 import AddPatientView from "../views/AddPatientView.vue";
+import NotFound from "../views/NotFound.vue";
+import AppLayout from "../layouts/AppLayout.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,24 +20,35 @@ const router = createRouter({
             component: AuthView,
         },
         {
-            path: "/patients",
-            name: "patients",
-            component: PatientsView,
+            path: "/",
+            component: AppLayout,
+            children: [
+                {
+                    path: "patients",
+                    name: "patients",
+                    component: PatientsView,
+                },
+                {
+                    path: "settings",
+                    name: "settings",
+                    component: SettingsView,
+                },
+                {
+                    path: "patients/:id",
+                    name: "patient",
+                    component: PatientView,
+                },
+                {
+                    path: "new",
+                    name: "new",
+                    component: AddPatientView,
+                },
+            ],
         },
         {
-            path: "/settings",
-            name: "settings",
-            component: SettingsView,
-        },
-        {
-            path: "/patient/:id",
-            name: "patient",
-            component: PatientView,
-        },
-        {
-            path: "/new",
-            name: "new",
-            component: AddPatientView,
+            path: "/:pathMatch(.*)*",
+            name: "not-found",
+            component: NotFound,
         },
     ],
 });

@@ -1,1 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
 @import "tailwindcss";
+
+@theme {
+    --color-bg: #ebebeb;
+    --color-theme: #50e3c2;
+    --color-crimson: #d50000;
+}
+
+@custom-variant hover (&:hover);
+
+* {
+    font-family: "Quicksand", sans-serif;
+}

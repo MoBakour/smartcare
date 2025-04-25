@@ -1,7 +1,6 @@
 # Wound Healing Time Prediction Model
 # This model predicts the healing time of wounds based on various features
 
-import os
 import joblib
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression

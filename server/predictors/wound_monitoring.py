@@ -1,7 +1,6 @@
 # Wound Infection Monitoring Model
 # This model predicts whether a wound is infected based on various measurements
 
-import os
 import joblib
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression

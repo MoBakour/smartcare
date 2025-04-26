@@ -59,7 +59,7 @@ const handleDeleteAccount = () => {
                     <!-- avatar -->
                     <label
                         for="avatar"
-                        class="w-[120px] h-[120px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition"
+                        class="shadow-lg w-[120px] h-[120px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition"
                     >
                         <template v-if="avatarPreview">
                             <img
@@ -88,26 +88,26 @@ const handleDeleteAccount = () => {
                             v-model="name"
                             type="text"
                             placeholder="Name"
-                            class="rounded-md px-3 py-1.5 bg-white outline-none text-sm w-[250px]"
+                            class="shadow-md rounded-md px-3 py-1.5 bg-white outline-none text-sm w-[250px]"
                         />
                         <input
                             v-model="email"
                             type="email"
                             placeholder="Email"
-                            class="rounded-md px-3 py-1.5 bg-white outline-none text-sm w-[250px]"
+                            class="shadow-md rounded-md px-3 py-1.5 bg-white outline-none text-sm w-[250px]"
                         />
                         <input
                             v-model="password"
                             type="password"
                             placeholder="Password"
-                            class="rounded-md px-3 py-1.5 bg-white outline-none text-sm w-[250px]"
+                            class="shadow-md rounded-md px-3 py-1.5 bg-white outline-none text-sm w-[250px]"
                         />
 
                         <!-- save button -->
                         <div class="flex justify-end">
                             <button
                                 type="submit"
-                                class="mt-2 w-[200px] bg-theme transition hover:opacity-80 px-6 py-2 text-white font-bold rounded-lg text-sm cursor-pointer disabled:opacity-50"
+                                class="shadow-md mt-2 w-[200px] bg-theme transition hover:opacity-80 px-6 py-2 text-white font-bold rounded-lg text-sm cursor-pointer disabled:opacity-50"
                                 :disabled="!name || !email"
                             >
                                 Save Changes
@@ -133,7 +133,7 @@ const handleDeleteAccount = () => {
                 </div>
                 <button
                     @click="handleClearData"
-                    class="w-[180px] bg-crimson text-white font-semibold text-sm px-6 py-2 rounded-lg hover:opacity-80 transition cursor-pointer"
+                    class="shadow-xl w-[180px] bg-crimson text-white font-semibold text-sm px-6 py-2 rounded-lg hover:opacity-80 transition cursor-pointer"
                 >
                     Clear Data
                 </button>
@@ -150,7 +150,7 @@ const handleDeleteAccount = () => {
                 </div>
                 <button
                     @click="handleDeleteAccount"
-                    class="w-[180px] bg-crimson text-white font-semibold text-sm px-6 py-2 rounded-lg hover:opacity-80 transition cursor-pointer"
+                    class="shadow-xl w-[180px] bg-crimson text-white font-semibold text-sm px-6 py-2 rounded-lg hover:opacity-80 transition cursor-pointer"
                 >
                     Delete Account
                 </button>

@@ -61,7 +61,7 @@ const patients = ref([
             :to="`/patients/${patient.id}`"
             v-for="patient in patients"
             :key="patient.id"
-            class="w-[80%] p-6 rounded-2xl flex items-center bg-gradient-to-r transition-all hover:w-[82%] cursor-pointer"
+            class="w-[80%] p-6 shadow-xl rounded-2xl flex items-center bg-gradient-to-r transition-all hover:w-[82%] cursor-pointer"
             :class="
                 patient.status === 'Critical'
                     ? 'from-crimson/35 to-crimson/15'

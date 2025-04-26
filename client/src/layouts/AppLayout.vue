@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import Header from "../components/Header.vue";
+import Header from "../components/common/Header.vue";
 
 const route = useRoute();
 

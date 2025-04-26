@@ -8,7 +8,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    Header: typeof import('./src/components/Header.vue')['default']
+    CriticalSettings: typeof import('./src/components/settings/CriticalSettings.vue')['default']
+    GeneralSettings: typeof import('./src/components/settings/GeneralSettings.vue')['default']
+    Header: typeof import('./src/components/common/Header.vue')['default']
+    HealthIndicators: typeof import('./src/components/patient/HealthIndicators.vue')['default']
     IFlowbiteArrowRightOutline: typeof import('~icons/flowbite/arrow-right-outline')['default']
     IHealthiconsInpatientOutline24px: typeof import('~icons/healthicons/inpatient-outline24px')['default']
     ILetsIconsSearchLight: typeof import('~icons/lets-icons/search-light')['default']
@@ -28,6 +31,9 @@ declare module 'vue' {
     ISolarUserOutline: typeof import('~icons/solar/user-outline')['default']
     NavItem: typeof import('./src/components/NavItem.vue')['default']
     PatientCard: typeof import('./src/components/PatientCard.vue')['default']
+    PatientDetails: typeof import('./src/components/patient/PatientDetails.vue')['default']
+    PatientHealthIndicators: typeof import('./src/components/patient/PatientHealthIndicators.vue')['default']
+    PatientMainInfo: typeof import('./src/components/patient/PatientMainInfo.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

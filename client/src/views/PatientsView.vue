@@ -38,7 +38,7 @@ const patients = ref([
 
 <template>
     <!-- top -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between relative">
         <!-- page title -->
         <h1 class="flex items-center gap-2">
             <span class="text-2xl">Patients</span>
@@ -48,7 +48,7 @@ const patients = ref([
         <!-- add button -->
         <router-link
             to="/new"
-            class="bg-theme text-white p-2 rounded-full transition hover:scale-105 cursor-pointer"
+            class="bg-theme text-white p-2 rounded-full transition hover:scale-105 cursor-pointer absolute right-0 top-1/2 -translate-y-1/2"
             title="Add Patient"
         >
             <i-mdi-plus class="text-2xl" />
@@ -56,7 +56,7 @@ const patients = ref([
     </div>
 
     <!-- patients list -->
-    <div class="mt-5 mb-15 flex flex-col items-center gap-6">
+    <div class="mt-10 mb-15 flex flex-col items-center gap-6">
         <router-link
             :to="`/patients/${patient.id}`"
             v-for="patient in patients"

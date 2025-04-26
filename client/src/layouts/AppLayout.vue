@@ -11,6 +11,8 @@ const isActive = (path: string, nested: boolean = false) => {
         return route.path === path;
     }
 };
+
+const greeting = new Date().getHours() < 12 ? "Good Morning" : "Good Evening";
 </script>
 
 <template>
@@ -43,7 +45,8 @@ const isActive = (path: string, nested: boolean = false) => {
             <!-- good morning -->
             <div class="flex flex-col ml-5">
                 <p>
-                    <span class="text-lg">Good Morning Dr.</span>
+                    <span class="text-lg">{{ greeting }}</span
+                    ><span class="text-lg"> Dr.</span>
                     <br />
                     <span class="text-2xl font-bold">Mohamed</span>
                 </p>

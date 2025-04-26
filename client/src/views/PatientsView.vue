@@ -64,8 +64,8 @@ const patients = ref([
             class="w-[80%] p-6 rounded-2xl flex items-center bg-gradient-to-r transition-all hover:w-[82%] cursor-pointer"
             :class="
                 patient.status === 'Critical'
-                    ? 'from-crimson/40 to-crimson/20'
-                    : 'from-theme/40 to-theme/20'
+                    ? 'from-crimson/35 to-crimson/15'
+                    : 'from-theme/45 to-theme/25'
             "
         >
             <!-- user avatar -->

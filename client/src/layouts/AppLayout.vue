@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
+import Header from "../components/Header.vue";
 
 const route = useRoute();
 
@@ -16,7 +17,7 @@ const isActive = (path: string, nested: boolean = false) => {
     <div class="flex">
         <!-- side bar -->
         <div
-            class="sidebar h-screen flex flex-col gap-8 bg-[#D9D9D9] w-[300px] rounded-tr-[50px] overflow-hidden"
+            class="sidebar sticky top-0 left-0 h-screen flex flex-col gap-8 bg-[#D9D9D9] w-[300px] rounded-tr-[50px] overflow-hidden"
         >
             <!-- top -->
             <div>
@@ -116,7 +117,10 @@ const isActive = (path: string, nested: boolean = false) => {
         </div>
 
         <!-- page content -->
-        <RouterView />
+        <div class="px-12 flex-1">
+            <Header />
+            <RouterView />
+        </div>
     </div>
 </template>
 

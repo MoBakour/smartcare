@@ -8,15 +8,26 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Header: typeof import('./src/components/Header.vue')['default']
     IFlowbiteArrowRightOutline: typeof import('~icons/flowbite/arrow-right-outline')['default']
     IHealthiconsInpatientOutline24px: typeof import('~icons/healthicons/inpatient-outline24px')['default']
+    ILetsIconsSearchLight: typeof import('~icons/lets-icons/search-light')['default']
+    IMaterialSymbolsLightSearchRounded: typeof import('~icons/material-symbols-light/search-rounded')['default']
+    IMdiAccountCircle: typeof import('~icons/mdi/account-circle')['default']
+    IMdiArrowRight: typeof import('~icons/mdi/arrow-right')['default']
+    IMdiBell: typeof import('~icons/mdi/bell')['default']
     IMdiEye: typeof import('~icons/mdi/eye')['default']
     IMdiEyeOff: typeof import('~icons/mdi/eye-off')['default']
     IMdiLogout: typeof import('~icons/mdi/logout')['default']
+    IMdiMagnify: typeof import('~icons/mdi/magnify')['default']
+    IMdiPlus: typeof import('~icons/mdi/plus')['default']
     IMdiSettings: typeof import('~icons/mdi/settings')['default']
     IMynauiArrowLongLeft: typeof import('~icons/mynaui/arrow-long-left')['default']
+    IMynauiSearch: typeof import('~icons/mynaui/search')['default']
+    ISolarArrowRightOutline: typeof import('~icons/solar/arrow-right-outline')['default']
     ISolarUserOutline: typeof import('~icons/solar/user-outline')['default']
     NavItem: typeof import('./src/components/NavItem.vue')['default']
+    PatientCard: typeof import('./src/components/PatientCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

@@ -1,3 +1,17 @@
+<script setup lang="ts">
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+
+const isActive = (path: string, nested: boolean = false) => {
+    if (nested) {
+        return route.path.startsWith(path);
+    } else {
+        return route.path === path;
+    }
+};
+</script>
+
 <template>
     <div class="flex">
         <!-- side bar -->
@@ -105,20 +119,6 @@
         <RouterView />
     </div>
 </template>
-
-<script setup lang="ts">
-import { useRoute } from "vue-router";
-
-const route = useRoute();
-
-const isActive = (path: string, nested: boolean = false) => {
-    if (nested) {
-        return route.path.startsWith(path);
-    } else {
-        return route.path === path;
-    }
-};
-</script>
 
 <style scoped>
 /* animate sidebar in */

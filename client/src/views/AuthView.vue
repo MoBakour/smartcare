@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import { ref } from "vue";
+
+const showPassword = ref(false);
+const togglePasswordVisibility = () => {
+    showPassword.value = !showPassword.value;
+};
+
+const handleSubmit = (event: Event) => {
+    const formData = new FormData(event.target as HTMLFormElement);
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
+
+    // Perform login logic here
+    console.log("Username:", username);
+    console.log("Password:", password);
+};
+</script>
+
 <template>
     <div>
         <!-- squares -->
@@ -82,22 +101,3 @@
         </form>
     </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from "vue";
-
-const showPassword = ref(false);
-const togglePasswordVisibility = () => {
-    showPassword.value = !showPassword.value;
-};
-
-const handleSubmit = (event: Event) => {
-    const formData = new FormData(event.target as HTMLFormElement);
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
-
-    // Perform login logic here
-    console.log("Username:", username);
-    console.log("Password:", password);
-};
-</script>

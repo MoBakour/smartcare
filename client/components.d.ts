@@ -16,6 +16,7 @@ declare module 'vue' {
     IMdiSettings: typeof import('~icons/mdi/settings')['default']
     IMynauiArrowLongLeft: typeof import('~icons/mynaui/arrow-long-left')['default']
     ISolarUserOutline: typeof import('~icons/solar/user-outline')['default']
+    NavItem: typeof import('./src/components/NavItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

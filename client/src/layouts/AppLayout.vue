@@ -14,7 +14,7 @@ const isActive = (path: string, nested: boolean = false) => {
 </script>
 
 <template>
-    <div class="flex">
+    <div class="layout flex">
         <!-- side bar -->
         <div
             class="sidebar sticky top-0 left-0 h-screen flex flex-col gap-8 bg-[#D9D9D9] w-[300px] rounded-tr-[50px] overflow-hidden"
@@ -125,19 +125,31 @@ const isActive = (path: string, nested: boolean = false) => {
 </template>
 
 <style scoped>
-/* animate sidebar in */
+/* animate slide-in */
 @keyframes slide-in {
     from {
         transform: translateX(-100%);
-        opacity: 0;
     }
     to {
         transform: translateX(0);
+    }
+}
+
+/* animate fade-in */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
         opacity: 1;
     }
 }
 
 .sidebar {
     animation: slide-in 0.5s ease-in-out;
+}
+
+.layout {
+    animation: fade-in 0.5s ease-in-out;
 }
 </style>

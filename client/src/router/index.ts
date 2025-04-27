@@ -5,6 +5,7 @@ import SettingsView from "../views/SettingsView.vue";
 import PatientView from "../views/PatientView.vue";
 import AddPatientView from "../views/AddPatientView.vue";
 import NotFound from "../views/NotFound.vue";
+import AboutView from "../views/AboutView.vue";
 import AppLayout from "../layouts/AppLayout.vue";
 
 const router = createRouter({
@@ -42,6 +43,11 @@ const router = createRouter({
                     path: "new",
                     name: "new",
                     component: AddPatientView,
+                },
+                {
+                    path: "about",
+                    name: "about",
+                    component: AboutView,
                 },
             ],
         },

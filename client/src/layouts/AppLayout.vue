@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useCommonStore } from "../stores/common";
-import Header from "../components/common/Header.vue";
+import Header from "../components/layout/Header.vue";
 
 const route = useRoute();
 const commonStore = useCommonStore();
@@ -74,7 +74,7 @@ const greeting = new Date().getHours() < 12 ? "Good Morning" : "Good Evening";
                     <li class="w-fit">
                         <router-link
                             to="/patients"
-                            class="flex items-center gap-2 hover:opacity-100 transition"
+                            class="flex items-center hover:opacity-100 transition"
                             :class="
                                 isActive('/patients', true)
                                     ? 'opacity-100'
@@ -93,17 +93,17 @@ const greeting = new Date().getHours() < 12 ? "Good Morning" : "Good Evening";
                                 class="text-3xl transition-all"
                                 :class="
                                     isActive('/patients', true)
-                                        ? 'ml-2'
-                                        : 'ml-6'
+                                        ? 'ml-4'
+                                        : 'ml-8'
                                 "
                             />
-                            <span class="text-2xl">Patients</span>
+                            <span class="text-2xl ml-2">Patients</span>
                         </router-link>
                     </li>
                     <li class="w-fit">
                         <router-link
                             to="/settings"
-                            class="flex items-center gap-2 hover:opacity-100 transition"
+                            class="flex items-center hover:opacity-100 transition"
                             :class="
                                 isActive('/settings')
                                     ? 'opacity-100'
@@ -118,17 +118,38 @@ const greeting = new Date().getHours() < 12 ? "Good Morning" : "Good Evening";
                             />
                             <i-mdi-settings
                                 class="text-3xl transition-all"
-                                :class="isActive('/settings') ? 'ml-2' : 'ml-6'"
+                                :class="isActive('/settings') ? 'ml-4' : 'ml-8'"
                             />
-                            <span class="text-2xl">Settings</span>
+                            <span class="text-2xl ml-2">Settings</span>
+                        </router-link>
+                    </li>
+                    <li class="w-fit">
+                        <router-link
+                            to="/about"
+                            class="flex items-center hover:opacity-100 transition"
+                            :class="
+                                isActive('/about')
+                                    ? 'opacity-100'
+                                    : 'opacity-60'
+                            "
+                        >
+                            <div
+                                class="transition-all h-[5px] rounded-r-[100px] bg-black"
+                                :class="isActive('/about') ? 'w-[40px]' : 'w-0'"
+                            />
+                            <i-akar-icons-info
+                                class="text-3xl transition-all"
+                                :class="isActive('/about') ? 'ml-4' : 'ml-8'"
+                            />
+                            <span class="text-2xl ml-2">About</span>
                         </router-link>
                     </li>
                     <li class="w-fit">
                         <button
-                            class="flex items-center gap-2 text-crimson opacity-60 hover:opacity-100 transition cursor-pointer"
+                            class="flex items-center text-crimson opacity-60 hover:opacity-100 transition cursor-pointer"
                         >
-                            <i-mdi-logout class="text-3xl ml-6" />
-                            <span class="text-2xl">Logout</span>
+                            <i-mdi-logout class="text-3xl ml-8" />
+                            <span class="text-2xl ml-2">Logout</span>
                         </button>
                     </li>
                 </ul>

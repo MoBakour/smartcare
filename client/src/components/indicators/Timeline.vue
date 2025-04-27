@@ -1,17 +1,27 @@
 <script setup lang="ts">
 import { Line } from "vue-chartjs";
+import { useCommonStore } from "../../stores/common";
+
+const commonStore = useCommonStore();
+
+// colors
+const colors: Record<string, string> = {
+    Stable: "#50e3c2",
+    Critical: "#DC143C",
+};
 
 // fake x and y data for the chart
 const xData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const yData = [0, 0.3, 0.4, 0.6, 0.5, 0.5, 0.7, 0.6, 0.4, 0.3];
+
 const chartData = {
     labels: xData,
     datasets: [
         {
             label: "Health Confidence",
             data: yData,
-            borderColor: "#50e3c2",
-            backgroundColor: "#50e3c2",
+            borderColor: colors[commonStore.patientStatus],
+            backgroundColor: colors[commonStore.patientStatus],
             fill: false,
             tension: 0,
         },

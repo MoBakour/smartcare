@@ -13,7 +13,7 @@ const patient = ref({
     severity: "Moderate",
     condition: "Burn",
     location: "Elbow",
-    status: "Critical",
+    status: "Stable",
     sex: "Female",
     age: 99,
     blood: "AB-",

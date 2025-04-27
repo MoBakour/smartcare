@@ -37,7 +37,9 @@ declare module 'vue' {
     PatientDetails: typeof import('./src/components/patient/PatientDetails.vue')['default']
     PatientHealthIndicators: typeof import('./src/components/patient/PatientHealthIndicators.vue')['default']
     PatientMainInfo: typeof import('./src/components/patient/PatientMainInfo.vue')['default']
+    Percentage: typeof import('./src/components/indicators/Percentage.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Timeline: typeof import('./src/components/indicators/Timeline.vue')['default']
   }
 }

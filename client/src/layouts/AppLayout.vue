@@ -1,8 +1,18 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { useCommonStore } from "../stores/common";
 import Header from "../components/common/Header.vue";
 
 const route = useRoute();
+const commonStore = useCommonStore();
+
+const isCritical = computed(() => {
+    return (
+        commonStore.patientStatus === "Critical" &&
+        /^\/patients\/[^/]+$/.test(route.path)
+    );
+});
 
 const isActive = (path: string, nested: boolean = false) => {
     if (nested) {
@@ -16,7 +26,13 @@ const greeting = new Date().getHours() < 12 ? "Good Morning" : "Good Evening";
 </script>
 
 <template>
-    <div class="layout flex">
+    <div
+        class="layout flex"
+        :class="{
+            'bg-gradient-to-t from-crimson/25 to-transparent bg-fixed':
+                isCritical,
+        }"
+    >
         <!-- side bar -->
         <div
             class="sidebar sticky top-0 left-0 h-screen flex flex-col gap-8 bg-[#D9D9D9] w-[300px] rounded-tr-[50px] overflow-hidden"

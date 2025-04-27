@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useCommonStore } from "../stores/common";
 import PatientMainInfo from "../components/patient/PatientMainInfo.vue";
 import PatientDetails from "../components/patient/PatientDetails.vue";
 import PatientHealthIndicators from "../components/patient/PatientHealthIndicators.vue";
+
+const patientStore = useCommonStore();
 
 const patient = ref({
     id: "ff763hjf92",
@@ -10,7 +13,7 @@ const patient = ref({
     severity: "Moderate",
     condition: "Burn",
     location: "Elbow",
-    status: "Stable",
+    status: "Critical",
     sex: "Female",
     age: 99,
     blood: "AB-",
@@ -20,6 +23,10 @@ const patient = ref({
     systemNotes:
         "Patient is in stable condition — continue administering medication at the current dosage and interval.",
     expectedTimeToHeal: 7,
+});
+
+onMounted(() => {
+    patientStore.setPatientStatus(patient.value.status);
 });
 </script>
 

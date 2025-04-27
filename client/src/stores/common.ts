@@ -3,16 +3,12 @@ import { defineStore } from "pinia";
 export const useCommonStore = defineStore("common", {
     state: () => {
         return {
-            isLoading: false,
-            isAuthenticated: false,
+            patientStatus: "Stable",
         };
     },
     actions: {
-        setLoading(loading: boolean) {
-            this.isLoading = loading;
-        },
-        setAuthenticated(authenticated: boolean) {
-            this.isAuthenticated = authenticated;
+        setPatientStatus(status: string) {
+            this.patientStatus = status;
         },
     },
 });

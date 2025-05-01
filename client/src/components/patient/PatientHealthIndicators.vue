@@ -5,12 +5,12 @@ import Number from "../indicators/Number.vue";
 import { computed, ref } from "vue";
 
 interface PatientHealthIndicators {
-    woundTemperature: number;
-    woundPH: number;
-    moistureLevel: number;
-    drugRelease: number;
-    systemNotes: string;
-    expectedTimeToHeal: number;
+    // woundTemperature: number;
+    // woundPH: number;
+    // moistureLevel: number;
+    // drugRelease: number;
+    // systemNotes: string;
+    // expectedTimeToHeal: number;
 }
 
 defineProps<{ patient: PatientHealthIndicators }>();

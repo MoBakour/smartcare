@@ -8,21 +8,12 @@ Content-Type: application/json
   "password": "password123"
 }
 
-### Test Login with Username
-POST http://localhost:5000/auth/login
-Content-Type: application/json
-
-{
-  "username": "testuser",
-  "password": "password123"
-}
-
 ### Test Login with Email
 POST http://localhost:5000/auth/login
 Content-Type: application/json
 
 {
-  "username": "test@example.com",
+  "email": "test@example.com",
   "password": "password123"
 }
 
@@ -31,7 +22,7 @@ POST http://localhost:5000/auth/signup
 Content-Type: application/json
 
 {
-  "username": "testuser"
+  "email": "test@example.com"
 }
 
 ### Test Invalid Login (Wrong Password)
@@ -39,6 +30,14 @@ POST http://localhost:5000/auth/login
 Content-Type: application/json
 
 {
-  "username": "testuser",
+  "email": "test@example.com",
   "password": "wrongpassword"
 }
+
+### Test Get Current User
+GET http://localhost:5000/auth/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NjM4MTEwMiwianRpIjoiODFhYWRlYzAtNmQzZi00YjBmLThjOGYtYWY0NjM2N2M5MWViIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjY4MTdhOTJlMDI4NjQ5YzRmOTE0Y2JhYiIsIm5iZiI6MTc0NjM4MTEwMiwiY3NyZiI6Ijc3M2U4NzBmLWExZjYtNGIxNC05MWZkLWYzYTE3YTIyYTAxYiIsImV4cCI6MTc0NjM4MjAwMn0.lR8LjAPQic__ZfvLq9O3kNEW8cmw9nrMh148Eq2e7dA
+
+### Test Delete All Users
+DELETE http://localhost:5000/auth/deleteall
+Content-Type: application/json

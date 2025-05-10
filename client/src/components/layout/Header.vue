@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import { useAuthStore } from "../../stores/auth.store";
+import { computed } from "vue";
+const authStore = useAuthStore();
+
+const username = computed(() => {
+    return authStore.user?.username.split(" ")[0];
+});
+</script>
+
 <template>
     <header class="w-full py-5 mb-5 flex justify-between items-center">
         <!-- search -->
@@ -14,7 +24,7 @@
         <div class="flex items-center gap-4">
             <p class="text-lg">
                 <span>Dr. </span>
-                <span>Mohamed</span>
+                <span>{{ username }}</span>
             </p>
             <div
                 class="w-[40px] h-[40px] bg-[#D9D9D9] rounded-full flex items-center justify-center"

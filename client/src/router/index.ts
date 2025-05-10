@@ -7,6 +7,7 @@ import AddPatientView from "../views/AddPatientView.vue";
 import NotFound from "../views/NotFound.vue";
 import AboutView from "../views/AboutView.vue";
 import AppLayout from "../layouts/AppLayout.vue";
+import { useAuthStore } from "../stores/auth.store";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,7 @@ const router = createRouter({
             path: "/auth",
             name: "auth",
             component: AuthView,
+            meta: { auth: true },
         },
         {
             path: "/",
@@ -57,6 +59,19 @@ const router = createRouter({
             component: NotFound,
         },
     ],
+});
+
+router.beforeEach((to, from, next) => {
+    const { isAuthenticated } = useAuthStore();
+    const isAuth = to.matched.some((record) => record.meta.auth);
+
+    if (!isAuth && !isAuthenticated) {
+        next({ name: "auth" });
+    } else if (isAuth && isAuthenticated) {
+        next({ name: "patients" });
+    } else {
+        next();
+    }
 });
 
 export default router;

@@ -16,6 +16,7 @@ declare module 'vue' {
     IFlowbiteArrowRightOutline: typeof import('~icons/flowbite/arrow-right-outline')['default']
     IHealthiconsInpatientOutline24px: typeof import('~icons/healthicons/inpatient-outline24px')['default']
     ILetsIconsSearchLight: typeof import('~icons/lets-icons/search-light')['default']
+    'ILineMd:loadingTwotoneLoop': typeof import('~icons/line-md/loading-twotone-loop')['default']
     IMaterialSymbolsLightSearchRounded: typeof import('~icons/material-symbols-light/search-rounded')['default']
     IMdiAbout: typeof import('~icons/mdi/about')['default']
     IMdiAccountCircle: typeof import('~icons/mdi/account-circle')['default']
@@ -31,6 +32,7 @@ declare module 'vue' {
     IMynauiSearch: typeof import('~icons/mynaui/search')['default']
     ISolarArrowRightOutline: typeof import('~icons/solar/arrow-right-outline')['default']
     ISolarUserOutline: typeof import('~icons/solar/user-outline')['default']
+    Login: typeof import('./src/components/auth/Login.vue')['default']
     NavItem: typeof import('./src/components/NavItem.vue')['default']
     NavLink: typeof import('./src/components/layout/NavLink.vue')['default']
     Number: typeof import('./src/components/indicators/Number.vue')['default']
@@ -42,6 +44,7 @@ declare module 'vue' {
     Ph: typeof import('./src/components/indicators/Ph.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Signup: typeof import('./src/components/auth/Signup.vue')['default']
     Timeline: typeof import('./src/components/indicators/Timeline.vue')['default']
   }
 }

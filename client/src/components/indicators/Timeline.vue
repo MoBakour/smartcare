@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Line } from "vue-chartjs";
-import { useCommonStore } from "../../stores/common";
+import { useCommonStore } from "../../stores/common.store";
 
 const commonStore = useCommonStore();
 

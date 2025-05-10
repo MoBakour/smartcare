@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useCommonStore } from "../stores/common";
+import { useCommonStore } from "../stores/common.store";
 import PatientMainInfo from "../components/patient/PatientMainInfo.vue";
 import PatientDetails from "../components/patient/PatientDetails.vue";
 import PatientHealthIndicators from "../components/patient/PatientHealthIndicators.vue";

@@ -34,13 +34,13 @@ def signup():
         user = app.db.users.insert_one(doc)
 
         # create JWT token
-        access_token = create_access_token(identity=str(user.inserted_id))
+        token = create_access_token(identity=str(user.inserted_id))
 
         # preprocess
         doc.pop("password", None)
         doc["_id"] = str(user.inserted_id)
 
-        return jsonify({"msg": "User created", "user": doc, "access_token": access_token}), 201
+        return jsonify({"msg": "User created", "user": doc, "token": token}), 201
 
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")
@@ -74,13 +74,13 @@ def login():
             return jsonify({"msg": "Incorrect password"}), 401
 
         # create JWT token
-        access_token = create_access_token(identity=str(user["_id"]))
+        token = create_access_token(identity=str(user["_id"]))
 
         # preprocess
         user.pop("password", None)
         user["_id"] = str(user["_id"])
 
-        return jsonify({"msg": "Login successful", "user": user, "access_token": access_token}), 200
+        return jsonify({"msg": "Login successful", "user": user, "token": token}), 200
 
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")

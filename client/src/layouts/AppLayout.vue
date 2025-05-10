@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute } from "vue-router";
-import { useCommonStore } from "../stores/common";
+import { useRoute, useRouter } from "vue-router";
+import { useCommonStore } from "../stores/common.store";
 import Header from "../components/layout/Header.vue";
+import { useAuthStore } from "../stores/auth.store";
 
 const route = useRoute();
+const router = useRouter();
 const commonStore = useCommonStore();
+const authStore = useAuthStore();
 
 const isCritical = computed(() => {
     return (
@@ -22,7 +25,16 @@ const isActive = (path: string, nested: boolean = false) => {
     }
 };
 
+const handleLogout = () => {
+    authStore.logout();
+    router.push("/auth");
+};
+
 const greeting = new Date().getHours() < 12 ? "Good Morning" : "Good Evening";
+
+const username = computed(() => {
+    return authStore.user?.username.split(" ")[0];
+});
 </script>
 
 <template>
@@ -64,7 +76,7 @@ const greeting = new Date().getHours() < 12 ? "Good Morning" : "Good Evening";
                     <span class="text-lg">{{ greeting }}</span
                     ><span class="text-lg"> Dr.</span>
                     <br />
-                    <span class="text-2xl font-bold">Mohamed</span>
+                    <span class="text-2xl font-bold">{{ username }}</span>
                 </p>
             </div>
 
@@ -147,6 +159,7 @@ const greeting = new Date().getHours() < 12 ? "Good Morning" : "Good Evening";
                     <li class="w-fit">
                         <button
                             class="flex items-center text-crimson opacity-60 hover:opacity-100 transition cursor-pointer"
+                            @click="handleLogout"
                         >
                             <i-mdi-logout class="text-3xl ml-8" />
                             <span class="text-2xl ml-2">Logout</span>

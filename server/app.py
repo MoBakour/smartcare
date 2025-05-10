@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_pymongo import PyMongo
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
+from flask_cors import CORS
 import os
 
 from routes.prediction_routes import prediction_bp, initialize_models
@@ -13,6 +14,8 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
+
+CORS(app)
 
 # init & config flask extensions
 jwt = JWTManager(app)

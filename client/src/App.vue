@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted } from "vue";
 import { useAxios } from "./composables/useAxios";
 
-const { request, error, isLoading } = useAxios();
+const { request, error } = useAxios();
 
 // INTERNAL TOOL
 const handleEscape = async (e: KeyboardEvent) => {

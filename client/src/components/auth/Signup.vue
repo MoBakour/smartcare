@@ -18,6 +18,12 @@ const handleSubmit = async (event: Event) => {
     const username = formData.get("username") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const confirmation = formData.get("confirmPassword") as string;
+
+    if (password !== confirmation) {
+        error.value = "Passwords do not match";
+        return;
+    }
 
     const response = await request("/auth/signup", "POST", {
         username,
@@ -101,16 +107,9 @@ const emit = defineEmits(["switchToLogin"]);
                     placeholder="Confirm Password"
                     required
                     class="bg-white w-[260px] px-2 py-1 rounded-md outline-none"
+                    id="confirmPassword"
                 />
             </div>
-
-            <!-- validation error message -->
-            <p
-                v-if="validationError"
-                class="text-crimson bg-crimson/10 px-2 py-1 rounded-md text-sm text-center"
-            >
-                {{ validationError }}
-            </p>
 
             <!-- error message -->
             <p

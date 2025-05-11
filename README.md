@@ -3,7 +3,6 @@
 TODOS:
 
 -   Add server validation for signup/login
--   Complete timeline chart
 -   Add gemini
 -   About
 -   Search
@@ -11,3 +10,4 @@ TODOS:
 -   Edit patient
 -   Settings
 -   Responsive
+-   Remove internal tools

@@ -8,8 +8,8 @@ export const useAxios = () => {
     const request = async (
         url: string,
         method: string,
-        data: any,
-        options: any = {}
+        data?: any,
+        options?: any
     ) => {
         isLoading.value = true;
         error.value = null;

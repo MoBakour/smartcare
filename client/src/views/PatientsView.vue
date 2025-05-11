@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from "vue";
 import { useAxios } from "../composables/useAxios";
 
 const { request, isLoading, error } = useAxios();
-const patients = ref([]);
+const patients = ref<IPatient[]>([]);
 
 const fetchPatients = async () => {
     const response = await request("/patient/all", "GET", null);
@@ -12,7 +12,7 @@ const fetchPatients = async () => {
             .map((patient: IPatient) => {
                 return {
                     ...patient,
-                    avatarUrl: computed(() => {
+                    avatar: computed(() => {
                         if (!patient.avatar) return null;
 
                         return `${
@@ -21,7 +21,7 @@ const fetchPatients = async () => {
                     }),
                 };
             })
-            .sort((a, b) => {
+            .sort((a: IPatient, b: IPatient) => {
                 const aSevere = a.wound.severity === "Severe";
                 const bSevere = b.wound.severity === "Severe";
 
@@ -92,8 +92,8 @@ onMounted(() => {
                 class="w-[80px] h-[80px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
             >
                 <img
-                    v-if="patient.avatarUrl"
-                    :src="patient.avatarUrl"
+                    v-if="patient.avatar"
+                    :src="patient.avatar"
                     class="w-full h-full object-cover"
                 />
                 <i-solar-user-outline v-else class="text-5xl" />

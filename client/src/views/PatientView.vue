@@ -8,7 +8,7 @@ import ConnectPatient from "../components/patient/ConnectPatient.vue";
 import { useRoute } from "vue-router";
 import { useAxios } from "../composables/useAxios";
 
-const patientStore = useCommonStore();
+const commonStore = useCommonStore();
 const {
     request: requestPatient,
     isLoading: isLoadingPatient,
@@ -20,15 +20,15 @@ const {
     error: errorHealth,
 } = useAxios();
 
-const patient = ref(null);
-const source = ref(null);
-const eventSource = ref(null);
-const healthData = ref([]);
+const patient = ref<any>(null);
+const source = ref<boolean>(false);
+const eventSource = ref<EventSource | null>(null);
+const healthData = ref<any[]>([]);
 
 const route = useRoute();
 
 const fetchPatient = async () => {
-    patientStore.patientStatus = "Stable";
+    commonStore.setPatientStatus("Stable");
     const response = await requestPatient(
         `/patient/${route.params.id}`,
         "GET",
@@ -36,8 +36,6 @@ const fetchPatient = async () => {
     );
     if (response) {
         patient.value = response.patient;
-        patientStore.patientStatus =
-            patient.value.wound.infected === "Yes" ? "Critical" : "Stable";
     }
 };
 
@@ -69,7 +67,7 @@ const connectPatient = async (file: File) => {
 
             // Update patient status based on infection status
             if (data.Infection === "Yes") {
-                patientStore.patientStatus = "Critical";
+                commonStore.setPatientStatus("Critical");
             }
         };
 

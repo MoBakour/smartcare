@@ -30,7 +30,7 @@ const patientData = ref({
 const handleSubmit = async () => {
     const formData = new FormData();
 
-    formData.append("avatar", patientData.value.avatarFile);
+    formData.append("avatar", patientData.value.avatarFile || "");
     formData.append("name", patientData.value.name);
     formData.append("gender", patientData.value.gender);
     formData.append("age", patientData.value.age);

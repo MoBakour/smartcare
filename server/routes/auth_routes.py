@@ -122,6 +122,30 @@ def get_current_user():
         return jsonify({"error": "An unexpected error occurred"}), 500
 
 
+@auth_bp.route("/delete", methods=["DELETE"])
+@jwt_required()
+def delete_user():
+    try:
+        current_user = get_jwt_identity()
+        app.db.users.delete_one({"_id": ObjectId(current_user)})
+        return jsonify({"msg": "User deleted"}), 200
+    except PyMongoError as e:
+        app.logger.error(f"Database error: {e}")
+        return jsonify({"error": "Database error"}), 500
+    except Exception as e:
+        app.logger.error(f"Unexpected error: {e}")
+        return jsonify({"error": "An unexpected error occurred"}), 500
+
+
+
+
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+
 
 
 
@@ -129,7 +153,7 @@ def get_current_user():
 This route is for testing purpose only.
 It should be removed or limited to admin access in production.
 """   
-@auth_bp.route("/deleteall", methods=["DELETE"])
+@auth_bp.route("/deleteallglobal", methods=["DELETE"])
 def delete_all_users():
     try:
         app.db.users.delete_many({})
@@ -140,3 +164,13 @@ def delete_all_users():
     except Exception as e:
         app.logger.error(f"Unexpected error: {e}")
         return jsonify({"error": "An unexpected error occurred"}), 500
+    
+
+@auth_bp.route("/delete/<string:user_email>", methods=["DELETE"])
+def delete_user_by_email(user_email):
+    try:
+        app.db.users.delete_one({"email": user_email})
+        return jsonify({"msg": "User deleted"}), 200
+    except PyMongoError as e:
+        app.logger.error(f"Database error: {e}")
+        return jsonify({"error": "Database error"}), 500

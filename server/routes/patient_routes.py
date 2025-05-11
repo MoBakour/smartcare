@@ -304,6 +304,10 @@ def delete_patient(patient_id):
         result = app.db.patients.delete_one({"_id": ObjectId(patient_id)})
         if result.deleted_count == 0:
             return jsonify({"error": "Failed to delete patient"}), 500
+        
+        # delete patient avatar from server
+        if patient["avatar"]:
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"]))
 
         return jsonify({"msg": "Patient deleted successfully"}), 200
 
@@ -322,12 +326,63 @@ def delete_all_patients():
         # Get the current user identity
         current_user = get_jwt_identity()
 
+        # Get all patients supervised by the current user
+        patients = app.db.patients.find({"supervisor": current_user})
+        patients = list(patients)
+
         # Delete all patients supervised by the current user
-        result = request.app.db.patients.delete_many({"supervisor": current_user})
+        result = app.db.patients.delete_many({"supervisor": current_user})
         if result.deleted_count == 0:
             return jsonify({"error": "No patients found for deletion"}), 404
+        
+        # delete all patient avatars from server
+        for patient in patients:
+            if patient["avatar"]:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"]))
 
         return jsonify({"msg": "All patients deleted successfully"}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+
+
+
+
+
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+### INTERNAL TOOL  -  TESTING AND DEVELOPMENT ROUTES
+
+
+
+
+
+
+# delete all patients globally
+@patient_bp.route("/deleteallglobal", methods=["DELETE"])
+def delete_all_patients_globally():
+    try:
+        # Get all patients
+        patients = app.db.patients.find({})
+        patients = list(patients)
+
+        result = app.db.patients.delete_many({})
+        if result.deleted_count == 0:
+            return jsonify({"error": "No patients found for deletion"}), 404
+        
+        # delete all patient avatars from server
+        for patient in patients:
+            if patient["avatar"]:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"]))
+
+        return jsonify({"msg": "All patients deleted successfully"}), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+

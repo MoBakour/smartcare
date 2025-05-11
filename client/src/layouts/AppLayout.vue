@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCommonStore } from "../stores/common.store";
 import Header from "../components/layout/Header.vue";
@@ -9,6 +9,8 @@ const route = useRoute();
 const router = useRouter();
 const commonStore = useCommonStore();
 const authStore = useAuthStore();
+
+const showLogoutPopup = ref(false);
 
 const isCritical = computed(() => {
     return (
@@ -159,7 +161,7 @@ const username = computed(() => {
                     <li class="w-fit">
                         <button
                             class="flex items-center text-crimson opacity-60 hover:opacity-100 transition cursor-pointer"
-                            @click="handleLogout"
+                            @click="showLogoutPopup = true"
                         >
                             <i-mdi-logout class="text-3xl ml-8" />
                             <span class="text-2xl ml-2">Logout</span>
@@ -167,6 +169,32 @@ const username = computed(() => {
                     </li>
                 </ul>
             </nav>
+        </div>
+
+        <!-- logout popup -->
+        <div
+            class="fixed inset-0 flex items-center justify-center bg-black/70 z-10 transition-all"
+            :class="{ 'opacity-0 pointer-events-none': !showLogoutPopup }"
+        >
+            <div class="bg-white p-5 rounded-lg">
+                <p>Are you sure you want to logout?</p>
+                <div class="flex flex-col gap-2 mt-5">
+                    <button
+                        class="bg-crimson text-white font-bold w-full h-[30px] text-sm rounded-md flex items-center justify-center cursor-pointer hover:opacity-80 transition"
+                        @click="handleLogout"
+                        title="Logout"
+                    >
+                        Logout <i-mdi-logout class="text-sm ml-2" />
+                    </button>
+                    <button
+                        class="bg-gray-300 text-gray-700 w-full h-[30px] text-sm rounded-md cursor-pointer hover:opacity-80 transition"
+                        @click="showLogoutPopup = false"
+                        title="Cancel"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- page content -->

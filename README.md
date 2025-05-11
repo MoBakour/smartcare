@@ -2,9 +2,6 @@
 
 TODOS:
 
--   Upload sensor source
--   Dynamic monitoring data stream
--   AI prediction
 -   Add gemini
 -   About
 -   Search

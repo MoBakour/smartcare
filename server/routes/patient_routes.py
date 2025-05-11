@@ -237,11 +237,15 @@ def stream_health_data(patient_id):
 
                         # prediction
                         infection = predict_infection(data)
-                        healing_time = predict_healing(patient_data)
+                        total_healing_time = predict_healing(patient_data) # in days
+                        
+                        # calculate time left based on created_at
+                        days_elapsed = (datetime.now(UTC) - patient['created_at'].replace(tzinfo=UTC)).days
+                        healing_time_left = max(0, total_healing_time - days_elapsed)
 
                         # update numeric row
                         data['Infection'] = infection[0]
-                        data['Healing Time'] = healing_time
+                        data['Healing Time'] = healing_time_left
 
                         # Convert row to JSON and send
                         yield f"data: {json.dumps(data)}\n\n"

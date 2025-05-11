@@ -145,7 +145,7 @@ onMounted(() => {
 
             <PatientHealthIndicators
                 v-else-if="source && healthData.length"
-                :data="healthData[healthData.length - 1]"
+                :data="healthData"
             />
 
             <ConnectPatient v-else @connect="connectPatient" />

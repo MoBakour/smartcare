@@ -2,7 +2,7 @@
 import Timeline from "../indicators/Timeline.vue";
 import Percentage from "../indicators/Percentage.vue";
 import Number from "../indicators/Number.vue";
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 
 interface PatientHealthIndicators {
     "Wound Temperature": number;
@@ -12,7 +12,11 @@ interface PatientHealthIndicators {
     "Healing Time": number;
 }
 
-const props = defineProps<{ data: PatientHealthIndicators }>();
+const props = defineProps<{ data: PatientHealthIndicators[] }>();
+
+const lastData = computed(() => {
+    return props.data[props.data.length - 1];
+});
 
 const tempColorMap = [
     { max: 28, color: "#0ea5e9" }, // Very cold (hypothermic risk)
@@ -47,38 +51,37 @@ const healingColorMap = [
 ];
 
 const tempColor = computed(() => {
-    const temp = props.data["Wound Temperature"];
+    const temp = lastData.value["Wound Temperature"];
     const match = tempColorMap.find((entry) => temp < entry.max);
     return match ? match.color : "#ef4444";
 });
 
 const phColor = computed(() => {
-    const pH = props.data["Wound pH"];
+    const pH = lastData.value["Wound pH"];
     const match = phColorMap.find((entry) => pH < entry.max);
     return match ? match.color : "#ef4444";
 });
 
 const healingColor = computed(() => {
-    const healingTime = props.data["Healing Time"];
+    const healingTime = lastData.value["Healing Time"];
     const match = healingColorMap.find((entry) => healingTime < entry.max);
     return match ? match.color : "#ef4444";
-});
-
-watch(props.data, (newData) => {
-    console.log(props.data);
 });
 </script>
 
 <template>
     <div class="grid grid-cols-4 grid-rows-2 gap-y-4 gap-x-8 mt-8">
         <!-- timeline -->
-        <Timeline class="col-span-3 flex flex-col items-start gap-2" />
+        <Timeline
+            class="col-span-3 flex flex-col items-start gap-2"
+            :data="props.data"
+        />
 
         <!-- temperature -->
         <Number
             class="row-start-2 flex flex-col items-center gap-2"
             :label="`Wound Temperature`"
-            :num="props.data['Wound Temperature']"
+            :num="lastData['Wound Temperature']"
             :temp="true"
             :unit="`°C`"
             :color="tempColor"
@@ -88,7 +91,7 @@ watch(props.data, (newData) => {
         <Number
             class="row-start-2 flex flex-col items-center gap-2"
             :label="`Wound pH`"
-            :num="props.data['Wound pH']"
+            :num="lastData['Wound pH']"
             :unit="`pH`"
             :color="phColor"
         />
@@ -97,7 +100,7 @@ watch(props.data, (newData) => {
         <Number
             class="row-start-2 flex flex-col items-center gap-2"
             :label="`Time to Heal`"
-            :num="Math.round(props.data['Healing Time'])"
+            :num="Math.round(lastData['Healing Time'])"
             :unit="`days`"
             :color="healingColor"
         />
@@ -106,14 +109,14 @@ watch(props.data, (newData) => {
         <Percentage
             class="col-start-4 flex flex-col items-center gap-2"
             :label="`Moisture Level %`"
-            :percentage="props.data['Moisture Level']"
+            :percentage="lastData['Moisture Level']"
         />
 
         <!-- drug -->
         <Percentage
             class="col-start-4 flex flex-col items-center gap-2"
             :label="`Drug Release %`"
-            :percentage="props.data['Drug Release']"
+            :percentage="lastData['Drug Release']"
         />
     </div>
 </template>

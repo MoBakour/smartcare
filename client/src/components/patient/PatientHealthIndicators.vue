@@ -2,27 +2,17 @@
 import Timeline from "../indicators/Timeline.vue";
 import Percentage from "../indicators/Percentage.vue";
 import Number from "../indicators/Number.vue";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
 interface PatientHealthIndicators {
-    // woundTemperature: number;
-    // woundPH: number;
-    // moistureLevel: number;
-    // drugRelease: number;
-    // systemNotes: string;
-    // expectedTimeToHeal: number;
+    "Wound Temperature": number;
+    "Wound pH": number;
+    "Moisture Level": number;
+    "Drug Release": number;
+    "Healing Time": number;
 }
 
-defineProps<{ patient: PatientHealthIndicators }>();
-
-const data = ref({
-    woundTemperature: 53,
-    woundPH: 2,
-    moistureLevel: 68,
-    drugRelease: 81,
-    systemNotes: "No issues",
-    expectedTimeToHeal: 7,
-});
+const props = defineProps<{ data: PatientHealthIndicators }>();
 
 const tempColorMap = [
     { max: 28, color: "#0ea5e9" }, // Very cold (hypothermic risk)
@@ -49,16 +39,33 @@ const phColorMap = [
     { max: 8.5, color: "#f97316" }, // Strongly alkaline
 ];
 
+const healingColorMap = [
+    { max: 10, color: "#0ea5e9" }, // Very cold (hypothermic risk)
+    { max: 20, color: "#38bdf8" }, // Cold (light blue)
+    { max: 30, color: "#3b82f6" }, // Cool (normal cold healing)
+    { max: 40, color: "#22d3ee" }, // Slightly cool
+];
+
 const tempColor = computed(() => {
-    const temp = data.value.woundTemperature;
+    const temp = props.data["Wound Temperature"];
     const match = tempColorMap.find((entry) => temp < entry.max);
-    return match ? match.color : "#ef4444"; // Very high temp (severe infection, necrosis risk)
+    return match ? match.color : "#ef4444";
 });
 
 const phColor = computed(() => {
-    const pH = data.value.woundPH;
+    const pH = props.data["Wound pH"];
     const match = phColorMap.find((entry) => pH < entry.max);
-    return match ? match.color : "#ef4444"; // Highly alkaline
+    return match ? match.color : "#ef4444";
+});
+
+const healingColor = computed(() => {
+    const healingTime = props.data["Healing Time"];
+    const match = healingColorMap.find((entry) => healingTime < entry.max);
+    return match ? match.color : "#ef4444";
+});
+
+watch(props.data, (newData) => {
+    console.log(props.data);
 });
 </script>
 
@@ -69,53 +76,44 @@ const phColor = computed(() => {
 
         <!-- temperature -->
         <Number
-            class="col-start-4 flex flex-col items-center gap-2"
+            class="row-start-2 flex flex-col items-center gap-2"
             :label="`Wound Temperature`"
-            :num="53"
+            :num="props.data['Wound Temperature']"
             :temp="true"
             :unit="`°C`"
             :color="tempColor"
-        />
-
-        <!-- healing -->
-        <Percentage
-            class="row-start-2 flex flex-col items-center gap-2"
-            :label="`Healing Process %`"
-            :percentage="72"
-        />
-
-        <!-- moisture -->
-        <Percentage
-            class="row-start-2 flex flex-col items-center gap-2"
-            :label="`Moisture Level %`"
-            :percentage="68"
-        />
-
-        <!-- drug -->
-        <Percentage
-            class="row-start-2 flex flex-col items-center gap-2"
-            :label="`Drug Release %`"
-            :percentage="81"
         />
 
         <!-- ph -->
         <Number
             class="row-start-2 flex flex-col items-center gap-2"
             :label="`Wound pH`"
-            :num="2"
+            :num="props.data['Wound pH']"
             :unit="`pH`"
             :color="phColor"
         />
-    </div>
 
-    <!-- system notes -->
-    <!-- <div class="mt-4">
-        <p class="text-gray-500 text-sm font-semibold">System —</p>
-        <p class="text-lg">
-            {{ patient.systemNotes }}
-        </p>
-        <p class="text-gray-500">
-            Expected time to heal — {{ patient.expectedTimeToHeal }} days
-        </p>
-    </div> -->
+        <!-- healing -->
+        <Number
+            class="row-start-2 flex flex-col items-center gap-2"
+            :label="`Time to Heal`"
+            :num="Math.round(props.data['Healing Time'])"
+            :unit="`days`"
+            :color="healingColor"
+        />
+
+        <!-- moisture -->
+        <Percentage
+            class="col-start-4 flex flex-col items-center gap-2"
+            :label="`Moisture Level %`"
+            :percentage="props.data['Moisture Level']"
+        />
+
+        <!-- drug -->
+        <Percentage
+            class="col-start-4 flex flex-col items-center gap-2"
+            :label="`Drug Release %`"
+            :percentage="props.data['Drug Release']"
+        />
+    </div>
 </template>

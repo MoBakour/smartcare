@@ -91,11 +91,11 @@ const updatePatientData = (key: string, value: any) => {
                 type="button"
                 class="w-[80px] py-1.5 rounded-md text-white font-semibold text-sm transition hover:opacity-80 cursor-pointer"
                 :class="
-                    modelValue.gender === 'male'
+                    modelValue.gender === 'Male'
                         ? 'bg-blue-400'
                         : 'bg-gray-300 text-black'
                 "
-                @click="updatePatientData('gender', 'male')"
+                @click="updatePatientData('gender', 'Male')"
             >
                 Male
             </button>
@@ -103,11 +103,11 @@ const updatePatientData = (key: string, value: any) => {
                 type="button"
                 class="w-[80px] py-1.5 rounded-md text-white font-semibold text-sm transition hover:opacity-80 cursor-pointer"
                 :class="
-                    modelValue.gender === 'female'
+                    modelValue.gender === 'Female'
                         ? 'bg-pink-300'
                         : 'bg-gray-300 text-black'
                 "
-                @click="updatePatientData('gender', 'female')"
+                @click="updatePatientData('gender', 'Female')"
             >
                 Female
             </button>

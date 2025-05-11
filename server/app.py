@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 import os
 
-from routes.prediction_routes import prediction_bp, initialize_models
+from utils.init_models import initialize_models
+
+from routes.prediction_routes import prediction_bp
 from routes.auth_routes import auth_bp
 from routes.patient_routes import patient_bp
 

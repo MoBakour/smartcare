@@ -22,7 +22,7 @@ declare global {
             type: string;
             location: string;
             severity: string;
-            infected: boolean;
+            infected: string;
             size: number;
             treatment: string;
         };

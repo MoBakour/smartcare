@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ConnectPatient: typeof import('./src/components/patient/ConnectPatient.vue')['default']
     CriticalSettings: typeof import('./src/components/settings/CriticalSettings.vue')['default']
     GeneralSettings: typeof import('./src/components/settings/GeneralSettings.vue')['default']
     Header: typeof import('./src/components/layout/Header.vue')['default']
@@ -18,6 +19,9 @@ declare module 'vue' {
     ILetsIconsSearchLight: typeof import('~icons/lets-icons/search-light')['default']
     'ILineMd:loadingTwotoneLoop': typeof import('~icons/line-md/loading-twotone-loop')['default']
     IMaterialSymbolsLightSearchRounded: typeof import('~icons/material-symbols-light/search-rounded')['default']
+    'IMdi:bloodBag': typeof import('~icons/mdi/blood-bag')['default']
+    'IMdi:heartPulse': typeof import('~icons/mdi/heart-pulse')['default']
+    'IMdi:thermometer': typeof import('~icons/mdi/thermometer')['default']
     IMdiAbout: typeof import('~icons/mdi/about')['default']
     IMdiAccountCircle: typeof import('~icons/mdi/account-circle')['default']
     IMdiArrowRight: typeof import('~icons/mdi/arrow-right')['default']
@@ -28,6 +32,7 @@ declare module 'vue' {
     IMdiMagnify: typeof import('~icons/mdi/magnify')['default']
     IMdiPlus: typeof import('~icons/mdi/plus')['default']
     IMdiSettings: typeof import('~icons/mdi/settings')['default']
+    IMdiUpload: typeof import('~icons/mdi/upload')['default']
     IMynauiArrowLongLeft: typeof import('~icons/mynaui/arrow-long-left')['default']
     IMynauiSearch: typeof import('~icons/mynaui/search')['default']
     ISolarArrowRightOutline: typeof import('~icons/solar/arrow-right-outline')['default']

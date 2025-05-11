@@ -1,50 +1,42 @@
 <script setup lang="ts">
 import { Doughnut } from "vue-chartjs";
+import { computed } from "vue";
 
 const props = defineProps<{
     percentage: number;
     label: string;
 }>();
 
-// colors
-const colors = [
-    "#50e3c2",
-    "#FBBF24",
-    "#F472B6",
-    "#A78BFA",
-    "#F9A8D4",
-    "#34D399",
-    "#60A5FA",
-    "#818CF8",
-    "#F87171",
-    "#FACC15",
-    "#10B981",
-    "#3B82F6",
-    "#6366F1",
-    "#EF4444",
-    "#EAB308",
-    "#22D3EE",
-    "#A3E635",
-    "#D946EF",
-    "#FB923C",
-    "#4ADE80",
+// Color mapping based on percentage ranges
+const percentageColorMap = [
+    { max: 20, color: "#ef4444" }, // Red - Critical
+    { max: 40, color: "#f97316" }, // Orange - Poor
+    { max: 60, color: "#eab308" }, // Yellow - Fair
+    { max: 80, color: "#22c55e" }, // Green - Good
+    { max: 100, color: "#10b981" }, // Emerald - Excellent
 ];
 
-// data
-const chartData = {
+// Get color based on percentage
+const getColorForPercentage = (percentage: number) => {
+    const match = percentageColorMap.find((entry) => percentage <= entry.max);
+    return match ? match.color : "#10b981"; // Default to excellent color
+};
+
+// Make chart data reactive
+const chartData = computed(() => ({
     labels: ["Completed", "Remaining"],
     datasets: [
         {
             data: [props.percentage, 100 - props.percentage],
             backgroundColor: [
-                colors[Math.floor(Math.random() * colors.length)],
+                getColorForPercentage(props.percentage),
                 "#d9d9d9",
             ],
             borderWidth: 0,
             cutout: "70%",
         },
     ],
-};
+}));
 
 // options
 const chartOptions = {

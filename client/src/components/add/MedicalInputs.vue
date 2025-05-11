@@ -179,8 +179,8 @@ const updatePatientData = (key: string, value: any) => {
                         class="rounded-md px-3 py-1.5 bg-white outline-none text-sm"
                     >
                         <option value="" disabled>Select</option>
-                        <option value="true">Yes</option>
-                        <option value="false">No</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
                     </select>
                 </div>
 

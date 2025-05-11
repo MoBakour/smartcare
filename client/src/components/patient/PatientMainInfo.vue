@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useCommonStore } from "../../stores/common.store";
+
+const commonStore = useCommonStore();
 
 const props = defineProps<{ patient: IPatient }>();
 
@@ -9,6 +12,10 @@ const avatarUrl = computed(() => {
     return `${import.meta.env.VITE_API_URL}/patient/avatar/${
         props.patient._id
     }`;
+});
+
+const isCritical = computed(() => {
+    return commonStore.patientStatus === "Critical";
 });
 </script>
 
@@ -39,11 +46,9 @@ const avatarUrl = computed(() => {
                 </p>
                 <p
                     class="font-bold"
-                    :class="
-                        patient.wound.infected ? 'text-crimson' : 'text-theme'
-                    "
+                    :class="isCritical ? 'text-crimson' : 'text-theme'"
                 >
-                    {{ patient.wound.infected ? `Critical` : `Stable` }}
+                    {{ isCritical ? `Critical` : `Stable` }}
                     Condition
                 </p>
             </div>

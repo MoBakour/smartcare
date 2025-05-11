@@ -1,68 +1,19 @@
-from flask import Blueprint, request, jsonify, current_app as app, send_file
+from flask import Blueprint, request, jsonify, current_app as app, send_file, Response, stream_with_context
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from pymongo.errors import PyMongoError
-import os
 from datetime import datetime, UTC
 from bson import ObjectId
-from marshmallow import Schema, ValidationError, fields, validate
+from marshmallow import ValidationError
+from utils.validation_schema import NewPatientSchema
+from utils.init_models import predict_healing, predict_infection
+import os
 import json
 import uuid
+import csv
+import time
 
 ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif'}
 ALLOWED_SOURCE_EXTENSIONS = {'.csv'}
 
-class WoundSchema(Schema):
-    type = fields.String(required=True, validate=validate.OneOf([
-        "Burn",
-        "Puncture",
-        "Abrasion",
-        "Surgical Wound",
-        "Ulcer",
-        "Pressure Ulcer",
-        "Diabetic Ulcer",
-        "Laceration"
-    ]))
-    location = fields.String(required=True, validate=validate.OneOf([
-        "Elbow",
-        "Hand",
-        "Head",
-        "Shoulder",
-        "Torso",
-        "Knee",
-        "Foot",
-        "Back",
-        "Arm",
-        "Leg"
-    ]))
-    severity = fields.String(required=True, validate=validate.OneOf([
-        "Moderate",
-        "Mild",
-        "Severe"
-    ]))
-    infected = fields.String(required=True, validate=validate.OneOf(["true", "false"]))
-    size = fields.Float(required=True, as_string=True)
-    treatment = fields.String(required=True, validate=validate.OneOf([
-        "Surgical Debridement",
-        "Antibiotics (Oral)",
-        "Moist Wound Dressing",
-        "Negative Pressure Wound Therapy",
-        "Cleaning and Bandage",
-        "No Treatment (for mild cases)",
-        "Antibiotics (Topical)"
-    ]))
-
-class NewPatientSchema(Schema):
-    supervisor = fields.String(required=True, validate=validate.Length(min=1))
-    name = fields.String(required=True, validate=validate.Length(min=1))
-    avatar = fields.String()
-    gender = fields.String(required=True, validate=validate.OneOf([
-        "male",
-        "female"]))
-    age = fields.Int(required=True, as_string=True)
-    bed = fields.Int(required=True, as_string=True)
-    department = fields.String(required=True, validate=validate.Length(min=1))
-    blood_type = fields.String(required=True, validate=validate.Length(min=1))
-    wound = fields.Nested(WoundSchema, required=True)
 
 patient_bp = Blueprint("patient", __name__)
 
@@ -102,7 +53,6 @@ def add_patient():
         loaded_data = NewPatientSchema().load(data)
 
         # Add timestamps
-        loaded_data["wound"]["infected"] = loaded_data["wound"]["infected"] == "true"
         loaded_data["created_at"] = datetime.now(UTC)
         loaded_data["updated_at"] = datetime.now(UTC)
 
@@ -214,6 +164,7 @@ Connect it to the user by updating user document in the DB and adding a new fiel
 """
 # Helper function to check allowed file extensions
 def allowed_file(filename):
+    return True
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_SOURCE_EXTENSIONS
 
@@ -238,25 +189,84 @@ def connect_patient(patient_id):
 
         # Process the file if it has an allowed extension
         if allowed_file(file.filename):
-            # Generate a unique filename
             filename = f"{patient_id}.csv"
-            # Construct the full path where the file will be saved
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            # Save the file to the filesystem
             file.save(filepath)
-            # Update the patient document with the file id
-            app.db.patients.update_one(
-                {"_id": ObjectId(patient_id)},
-                {"$set": {"source": filename}}
-            )
         else:
             return jsonify({"error": "Invalid file extension"}), 400
 
-        return jsonify({"message": "Patient connected to data source"}), 200
-    
+        return jsonify({"msg": "Patient connected to data source"}), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+# stream health data
+@patient_bp.route("/monitor/<string:patient_id>", methods=["GET"])
+def stream_health_data(patient_id):
+    try:
+        patient = app.db.patients.find_one({"_id": ObjectId(patient_id)})
+        if not patient:
+            return jsonify({"error": "Patient not found"}), 404
+        
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], patient_id + ".csv")
+
+        def generate():
+            try:
+                with open(filepath, 'r') as csvfile:
+                    reader = csv.DictReader(csvfile)
+                    for row in reader:
+                        # Convert string values to numbers
+                        data = {
+                            'Time': float(row['Time']),
+                            'Wound Temperature': float(row['Wound Temperature']), 
+                            'Wound pH': float(row['Wound pH']),
+                            'Moisture Level': float(row['Moisture Level']),
+                            'Drug Release': float(row['Drug Release']),
+                        }
+
+                        patient_data = {
+                            'Wound Type': patient['wound']['type'],
+                            'Location': patient['wound']['location'],
+                            'Severity': patient['wound']['severity'],
+                            'Infected': patient['wound']['infected'],
+                            'Patient Age': patient['age'],
+                            'Size': patient['wound']['size'],
+                            'Treatment': patient['wound']['treatment']
+                        }
+
+                        # prediction
+                        infection = predict_infection(data)
+                        healing_time = predict_healing(patient_data)
+
+                        # update numeric row
+                        data['Infection'] = infection[0]
+                        data['Healing Time'] = healing_time
+
+                        # Convert row to JSON and send
+                        yield f"data: {json.dumps(data)}\n\n"
+                        time.sleep(2)
+            finally:
+                # delete the file after streaming is complete
+                try:
+                    os.remove(filepath)
+                    print(f"Cleaned up file: {filepath}")
+                except Exception as e:
+                    print(f"Error cleaning up file: {str(e)}")
+
+        return Response(
+                stream_with_context(generate()),
+                mimetype='text/event-stream',
+                headers={
+                    'Cache-Control': 'no-cache',
+                    'Connection': 'keep-alive',
+                    'X-Accel-Buffering': 'no'
+                }
+            )
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+            
 
 
 
@@ -291,7 +301,7 @@ def delete_patient(patient_id):
         if result.deleted_count == 0:
             return jsonify({"error": "Failed to delete patient"}), 500
 
-        return jsonify({"message": "Patient deleted successfully"}), 200
+        return jsonify({"msg": "Patient deleted successfully"}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -313,7 +323,7 @@ def delete_all_patients():
         if result.deleted_count == 0:
             return jsonify({"error": "No patients found for deletion"}), 404
 
-        return jsonify({"message": "All patients deleted successfully"}), 200
+        return jsonify({"msg": "All patients deleted successfully"}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

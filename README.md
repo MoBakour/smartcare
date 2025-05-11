@@ -4,7 +4,8 @@ TODOS:
 
 -   Upload sensor source
 -   Dynamic monitoring data stream
--   AI Prediction
+-   AI prediction
+-   Add gemini
 -   About
 -   Search
 -   Delete patient

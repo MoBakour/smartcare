@@ -338,5 +338,3 @@ class BasePredictor:
     def get_prediction_features(self):
         """Return the feature columns required for prediction"""
         return self.prediction_features
-
-

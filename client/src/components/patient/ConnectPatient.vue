@@ -40,6 +40,7 @@ const handleUpload = (event: Event) => {
             </label>
             <input
                 type="file"
+                accept=".csv"
                 id="file"
                 class="hidden"
                 @change="handleUpload"

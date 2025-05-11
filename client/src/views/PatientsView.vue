@@ -22,11 +22,11 @@ const fetchPatients = async () => {
                 };
             })
             .sort((a, b) => {
-                const aInfected = a.wound.infected === "Yes";
-                const bInfected = b.wound.infected === "Yes";
+                const aSevere = a.wound.severity === "Severe";
+                const bSevere = b.wound.severity === "Severe";
 
-                if (aInfected && !bInfected) return -1;
-                if (!aInfected && bInfected) return 1;
+                if (aSevere && !bSevere) return -1;
+                if (!aSevere && bSevere) return 1;
                 return 0;
             });
     }
@@ -82,7 +82,7 @@ onMounted(() => {
             :key="patient._id"
             class="w-[80%] p-6 shadow-xl rounded-2xl flex items-center bg-gradient-to-r transition-all hover:w-[82%] cursor-pointer"
             :class="
-                patient.wound.infected === 'Yes'
+                patient.wound.severity === 'Severe'
                     ? 'from-crimson/35 to-crimson/15'
                     : 'from-theme/45 to-theme/25'
             "
@@ -105,14 +105,12 @@ onMounted(() => {
                 <p
                     class="font-bold flex gap-3"
                     :class="
-                        patient.wound.infected === 'Yes'
+                        patient.wound.severity === 'Severe'
                             ? 'text-crimson'
                             : 'text-white'
                     "
                 >
-                    <span>{{
-                        patient.wound.infected === "Yes" ? "Critical" : "Stable"
-                    }}</span>
+                    <span>{{ patient.wound.severity }}</span>
                     <span>|</span>
                     <span>{{ patient.wound.type }}</span>
                 </p>

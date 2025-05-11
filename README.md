@@ -2,6 +2,8 @@
 
 TODOS:
 
+-   Add server validation for signup/login
+-   Complete timeline chart
 -   Add gemini
 -   About
 -   Search

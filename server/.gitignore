@@ -22,3 +22,6 @@ env/
 # Model files
 *.pkl
 models/
+
+# Uploads
+uploads/

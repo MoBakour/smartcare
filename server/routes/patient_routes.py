@@ -1,24 +1,18 @@
-from flask import Blueprint, app, request, jsonify
+from flask import Blueprint, request, jsonify, current_app as app, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from werkzeug.security import generate_password_hash, check_password_hash
 from pymongo.errors import PyMongoError
 import os
-from werkzeug.utils import secure_filename
 from datetime import datetime, UTC
 from bson import ObjectId
 from marshmallow import Schema, ValidationError, fields, validate
+import json
+import uuid
 
+ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif'}
+ALLOWED_SOURCE_EXTENSIONS = {'.csv'}
 
-class NewPatientSchema(Schema):
-    supervisor = fields.String(required=True)
-    name = fields.String(required=True)
-    gender = fields.String(required=True, validate=validate.OneOf([
-        "male",
-        "female"]))
-    age = fields.Int(required=True)
-    bed = fields.String(required=True)
-    department = fields.String(required=True)
-    wound_type = fields.String(required=True, validate=validate.OneOf([
+class WoundSchema(Schema):
+    type = fields.String(required=True, validate=validate.OneOf([
         "Burn",
         "Puncture",
         "Abrasion",
@@ -45,8 +39,8 @@ class NewPatientSchema(Schema):
         "Mild",
         "Severe"
     ]))
-    infected = fields.Boolean(required=True)
-    size = fields.Float(required=True)
+    infected = fields.String(required=True, validate=validate.OneOf(["true", "false"]))
+    size = fields.Float(required=True, as_string=True)
     treatment = fields.String(required=True, validate=validate.OneOf([
         "Surgical Debridement",
         "Antibiotics (Oral)",
@@ -56,101 +50,64 @@ class NewPatientSchema(Schema):
         "No Treatment (for mild cases)",
         "Antibiotics (Topical)"
     ]))
-    created_at = fields.DateTime(default=datetime.now(UTC))
-    updated_at = fields.DateTime(default=datetime.now(UTC))
+
+class NewPatientSchema(Schema):
+    supervisor = fields.String(required=True, validate=validate.Length(min=1))
+    name = fields.String(required=True, validate=validate.Length(min=1))
+    avatar = fields.String()
+    gender = fields.String(required=True, validate=validate.OneOf([
+        "male",
+        "female"]))
+    age = fields.Int(required=True, as_string=True)
+    bed = fields.Int(required=True, as_string=True)
+    department = fields.String(required=True, validate=validate.Length(min=1))
+    blood_type = fields.String(required=True, validate=validate.Length(min=1))
+    wound = fields.Nested(WoundSchema, required=True)
 
 patient_bp = Blueprint("patient", __name__)
 
-"""
-Patient Object:
-{
-    "supervisor": <string>,     # user id of the current authenticated user. Get it from get_jwt_identity()
-    "name": <string>,
-    "gender": <string>,
-    "age": <int>,
-    "bed": <string>,
-    "department": <string>,
-    "wound_type": <string>,
-    "location": <string>,
-    "severity": <string>,
-    "infected": <boolean>,
-    "size": <float>,
-    "treatment": <string>,
-    "created_at": <datetime>,   # use datetime.now(UTC) to get the current time in UTC
-    "updated_at": <datetime>,   # use datetime.now(UTC) to get the current time in UTC
-}
-You will recieve all above fields from the request body EXCEPT FOR supervisor, created_at and updated_at.
-
-Validation:
-Regarding validation, we may look for some package similar to yup/zod to do this.
-
-Validate for possible patient.gender values:
-[
-    "Male",
-    "Female"
-]
-
-Validate for possible patient.wound_type values:
-[
-  "Burn",
-  "Puncture",
-  "Abrasion",
-  "Surgical Wound",
-  "Ulcer",
-  "Pressure Ulcer",
-  "Diabetic Ulcer",
-  "Laceration"
-]
-
-Validate for possible patient.location values:
-[
-  "Elbow",
-  "Hand",
-  "Head",
-  "Shoulder",
-  "Torso",
-  "Knee",
-  "Foot",
-  "Back",
-  "Arm",
-  "Leg"
-]
-
-Validate for possible patient.severity values:
-[
-  "Moderate",
-  "Mild",
-  "Severe"
-]
-
-Validate for possible patient.treatment values:
-[
-  "Surgical Debridement",
-  "Antibiotics (Oral)",
-  "Moist Wound Dressing",
-  "Negative Pressure Wound Therapy",
-  "Cleaning and Bandage",
-  "No Treatment (for mild cases)",
-  "Antibiotics (Topical)"
-]
-"""
 @patient_bp.route("/new", methods=["POST"])
 @jwt_required()
 def add_patient():
     try:
-        data = request.get_json()
+        data = request.form.to_dict()
+
         if not data:
-            return jsonify({"msg": "Invalid input"}), 400
+            return jsonify({"error": "Invalid input"}), 400
 
+        # Handle avatar image upload
+        if "avatar" in request.files:
+            avatar_file = request.files["avatar"]
+            if avatar_file.filename:
+                # Validate file is an image
+                if not avatar_file.content_type.startswith('image/'):
+                    return jsonify({"error": "Avatar must be an image file"}), 400
+                    
+                ext = os.path.splitext(avatar_file.filename)[1].lower()
+                if ext not in ALLOWED_IMAGE_EXTENSIONS:
+                    return jsonify({"error": "Invalid image format. Allowed formats: JPG, JPEG, PNG, GIF"}), 400
+
+                avatar_filename = f"{uuid.uuid4()}{ext}"
+                avatar_path = os.path.join(app.config['UPLOAD_FOLDER'], avatar_filename)
+                avatar_file.save(avatar_path)
+                data["avatar"] = f"{avatar_filename}"
+        else:
+            data["avatar"] = ""
+
+        # Process values
         data["supervisor"] = get_jwt_identity()
-        data["created_at"] = datetime.now(UTC)
-        data["updated_at"] = datetime.now(UTC)
-
+        data["wound"] = json.loads(data["wound"])
+        
         # Validate the input data
         loaded_data = NewPatientSchema().load(data)
 
+        # Add timestamps
+        loaded_data["wound"]["infected"] = loaded_data["wound"]["infected"] == "true"
+        loaded_data["created_at"] = datetime.now(UTC)
+        loaded_data["updated_at"] = datetime.now(UTC)
+
         # Insert the new patient into the database
-        result = request.app.db.patients.insert_one(loaded_data)
+        result = app.db.patients.insert_one(loaded_data)
         
         # Return the newly created patient 
         data["_id"] = str(result.inserted_id)
@@ -158,14 +115,32 @@ def add_patient():
         return jsonify({"msg": "Patient created", "patient": data}), 201
     
     except ValidationError as err:
-        print("Validation Errors:", err.messages)
-    
-    except PyMongoError as e:
-        print("Database Error:", e)
-        return jsonify({"error": "Database error", "details": str(e)}), 500
+        return jsonify({"error": "Please fill all fields correctly", "details": err.messages}), 400
 
     except Exception as e:
-        return jsonify({"error": "Invalid input", "details": str(e)}), 400
+        return jsonify({"error": str(e)}), 400
+
+
+
+# get all patients
+@patient_bp.route("/all", methods=["GET"])
+@jwt_required()
+def get_all_patients():
+    try:
+        current_user = get_jwt_identity()
+        patients = app.db.patients.find({"supervisor": current_user})
+        patients = list(patients)
+
+        # Convert ObjectId to string for JSON serialization
+        for patient in patients:
+            patient["_id"] = str(patient["_id"])
+            patient["created_at"] = str(patient["created_at"])
+            patient["updated_at"] = str(patient["updated_at"])
+
+        return jsonify({"patients": patients}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 """
@@ -181,7 +156,7 @@ def get_patient(patient_id):
         current_user = get_jwt_identity()
 
         # Check if the patient exists
-        patient = request.app.db.patients.find_one({"_id": ObjectId(patient_id), "supervisor": current_user})
+        patient = app.db.patients.find_one({"_id": ObjectId(patient_id), "supervisor": current_user})
         if not patient:
             return jsonify({"error": "Patient not found"}), 404
 
@@ -192,11 +167,43 @@ def get_patient(patient_id):
         
         return jsonify({"patient": patient}), 200
     
-
-    except PyMongoError as e:
-        return jsonify({"error": "Database error", "details": str(e)}), 500
     except Exception as e:
-        return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
+
+
+# stream patient avatar
+@patient_bp.route("/avatar/<string:patient_id>", methods=["GET"])
+def stream_patient_avatar(patient_id):
+    try:
+        # Check if the patient exists
+        patient = app.db.patients.find_one({"_id": ObjectId(patient_id)})
+        if not patient:
+            return jsonify({"error": "Patient not found"}), 404
+        
+        # Get the avatar file path
+        avatar_path = os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"])
+
+        # Get file extension from avatar filename
+        extension = patient["avatar"].split('.')[-1].lower()
+        
+        # Map common image extensions to MIME types
+        mime_types = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg', 
+            'png': 'image/png',
+            'gif': 'image/gif',
+        }
+        
+        # Get correct MIME type or default to jpeg
+        mime_type = mime_types.get(extension, 'image/jpeg')
+
+        # Stream the avatar file with correct MIME type
+        return send_file(avatar_path, mimetype=mime_type)
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 
 
@@ -205,19 +212,10 @@ Make it possible to upload a csv file into the server.
 Rename it to a unique id and save it in the server filesystem somewhere.
 Connect it to the user by updating user document in the DB and adding a new field called "source" with the value of the file id.
 """
-
-
-# Define the directory where uploaded files will be stored
-UPLOAD_FOLDER = 'patient_data'
-# Define allowed extensions (optional but good practice)
-ALLOWED_EXTENSIONS = {'csv'}
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 # Helper function to check allowed file extensions
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_SOURCE_EXTENSIONS
 
 
 # connect patient to data source
@@ -229,7 +227,7 @@ def connect_patient(patient_id):
         current_user = get_jwt_identity()
 
         # Check if the patient exists
-        patient = request.app.db.patients.find_one({"_id": ObjectId(patient_id), "supervisor": current_user})
+        patient = app.db.patients.find_one({"_id": ObjectId(patient_id), "supervisor": current_user})
         if not patient:
             return jsonify({"error": "Patient not found"}), 404
 
@@ -247,7 +245,7 @@ def connect_patient(patient_id):
             # Save the file to the filesystem
             file.save(filepath)
             # Update the patient document with the file id
-            request.app.db.patients.update_one(
+            app.db.patients.update_one(
                 {"_id": ObjectId(patient_id)},
                 {"$set": {"source": filename}}
             )
@@ -256,10 +254,8 @@ def connect_patient(patient_id):
 
         return jsonify({"message": "Patient connected to data source"}), 200
     
-    except PyMongoError as e:
-        return jsonify({"error": "Database error", "details": str(e)}), 500
     except Exception as e:
-        return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
 
 
@@ -286,21 +282,19 @@ def delete_patient(patient_id):
         current_user = get_jwt_identity()
 
         # Check if the patient exists
-        patient = request.app.db.patients.find_one({"_id": ObjectId(patient_id), "supervisor": current_user})
+        patient = app.db.patients.find_one({"_id": ObjectId(patient_id), "supervisor": current_user})
         if not patient:
             return jsonify({"error": "Patient not found"}), 404
 
         # Delete the patient from the database
-        result = request.app.db.patients.delete_one({"_id": ObjectId(patient_id)})
+        result = app.db.patients.delete_one({"_id": ObjectId(patient_id)})
         if result.deleted_count == 0:
             return jsonify({"error": "Failed to delete patient"}), 500
 
         return jsonify({"message": "Patient deleted successfully"}), 200
 
-    except PyMongoError as e:
-        return jsonify({"error": "Database error", "details": str(e)}), 500
     except Exception as e:
-        return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
 
 
@@ -321,7 +315,5 @@ def delete_all_patients():
 
         return jsonify({"message": "All patients deleted successfully"}), 200
 
-    except PyMongoError as e:
-        return jsonify({"error": "Database error", "details": str(e)}), 500
     except Exception as e:
-        return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
+        return jsonify({"error": str(e)}), 500

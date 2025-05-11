@@ -1,39 +1,37 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useAxios } from "../composables/useAxios";
 
-const patients = ref([
-    {
-        id: 2,
-        name: "Jane Smith",
-        status: "Critical",
-        condition: "Fracture",
-    },
-    {
-        id: 4,
-        name: "Bob Brown",
-        status: "Critical",
-        condition: "Burns",
-    },
-    {
-        id: 3,
-        name: "Alice Johnson",
-        status: "Stable",
-        condition: "Headache",
-    },
-    {
-        id: 1,
-        name: "John Doe",
-        status: "Stable",
-        condition: "Burns",
-    },
+const { request, isLoading, error } = useAxios();
+const patients = ref([]);
 
-    {
-        id: 5,
-        name: "Charlie Davis",
-        status: "Stable",
-        condition: "Fracture",
-    },
-]);
+const fetchPatients = async () => {
+    const response = await request("/patient/all", "GET", null);
+    if (response) {
+        patients.value = response.patients
+            .map((patient: IPatient) => {
+                return {
+                    ...patient,
+                    avatarUrl: computed(() => {
+                        if (!patient.avatar) return null;
+
+                        return `${
+                            import.meta.env.VITE_API_URL
+                        }/patient/avatar/${patient._id}`;
+                    }),
+                };
+            })
+            .sort((a, b) => {
+                if (a.wound.infected && !b.wound.infected) return -1;
+                if (!a.wound.infected && b.wound.infected) return 1;
+                return 0;
+            });
+    }
+};
+
+onMounted(() => {
+    fetchPatients();
+});
 </script>
 
 <template>
@@ -55,24 +53,47 @@ const patients = ref([
         </router-link>
     </div>
 
+    <!-- loading state -->
+    <div v-if="isLoading" class="mt-10 flex justify-center">
+        <i-line-md:loading-twotone-loop class="text-4xl" />
+    </div>
+
+    <!-- error state -->
+    <div v-else-if="error" class="mt-10 text-center text-red-500">
+        {{ error }}
+    </div>
+
+    <!-- no patients found -->
+    <p
+        class="text-gray-500 text-center mt-10"
+        v-else-if="patients.length === 0"
+    >
+        No patients found
+    </p>
+
     <!-- patients list -->
-    <div class="mt-10 mb-15 flex flex-col items-center gap-6">
+    <div v-else class="mt-10 mb-15 flex flex-col items-center gap-6">
         <router-link
-            :to="`/patients/${patient.id}`"
+            :to="`/patients/${patient._id}`"
             v-for="patient in patients"
-            :key="patient.id"
+            :key="patient._id"
             class="w-[80%] p-6 shadow-xl rounded-2xl flex items-center bg-gradient-to-r transition-all hover:w-[82%] cursor-pointer"
             :class="
-                patient.status === 'Critical'
+                patient.wound.infected
                     ? 'from-crimson/35 to-crimson/15'
                     : 'from-theme/45 to-theme/25'
             "
         >
             <!-- user avatar -->
             <div
-                class="w-[80px] h-[80px] bg-[#D9D9D9] rounded-full flex items-center justify-center"
+                class="w-[80px] h-[80px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
             >
-                <i-solar-user-outline class="text-5xl" />
+                <img
+                    v-if="patient.avatarUrl"
+                    :src="patient.avatarUrl"
+                    class="w-full h-full object-cover"
+                />
+                <i-solar-user-outline v-else class="text-5xl" />
             </div>
 
             <!-- user details -->
@@ -81,14 +102,14 @@ const patients = ref([
                 <p
                     class="font-bold flex gap-3"
                     :class="
-                        patient.status === 'Critical'
-                            ? 'text-crimson'
-                            : 'text-white'
+                        patient.wound.infected ? 'text-crimson' : 'text-white'
                     "
                 >
-                    <span>{{ patient.status }}</span>
+                    <span>{{
+                        patient.wound.infected ? "Critical" : "Stable"
+                    }}</span>
                     <span>|</span>
-                    <span>{{ patient.condition }}</span>
+                    <span>{{ patient.wound.type }}</span>
                 </p>
             </div>
         </router-link>

@@ -18,18 +18,14 @@ const handleSubmit = async (event: Event) => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    try {
-        const response = await request("/auth/login", "POST", {
-            email,
-            password,
-        });
+    const response = await request("/auth/login", "POST", {
+        email,
+        password,
+    });
 
-        if (response) {
-            authStore.login(response.token, response.user);
-            router.push("/patients");
-        }
-    } catch (err) {
-        console.error("Login failed:", err);
+    if (response) {
+        authStore.login(response.token, response.user);
+        router.push("/patients");
     }
 };
 

@@ -1,28 +1,22 @@
 <script setup lang="ts">
-interface PatientDetails {
-    sex: string;
-    age: number;
-    blood: string;
-    bed: string;
-    department: string;
-    checkIn: string;
-}
+import { formatDate } from "../../utils/utils";
 
-defineProps<{ patient: PatientDetails }>();
+defineProps<{ patient: IPatient }>();
 </script>
+
 <template>
     <div class="flex gap-10">
         <div class="flex gap-3">
             <div class="flex flex-col text-gray-500">
-                <span>Sex: </span>
+                <span>Gender: </span>
                 <span>Age: </span>
                 <span>Blood: </span>
             </div>
 
             <div class="flex flex-col font-semibold">
-                <span>{{ patient.sex }}</span>
+                <span>{{ patient.gender }}</span>
                 <span>{{ patient.age }}</span>
-                <span>{{ patient.blood }}</span>
+                <span>{{ patient.blood_type }}</span>
             </div>
         </div>
 
@@ -36,7 +30,7 @@ defineProps<{ patient: PatientDetails }>();
             <div class="flex flex-col font-semibold">
                 <span>{{ patient.bed }}</span>
                 <span>{{ patient.department }}</span>
-                <span>{{ patient.checkIn }}</span>
+                <span>{{ formatDate(new Date(patient.created_at)) }}</span>
             </div>
         </div>
     </div>

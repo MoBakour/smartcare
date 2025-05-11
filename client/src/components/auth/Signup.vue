@@ -19,19 +19,15 @@ const handleSubmit = async (event: Event) => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    try {
-        const response = await request("/auth/signup", "POST", {
-            username,
-            email,
-            password,
-        });
+    const response = await request("/auth/signup", "POST", {
+        username,
+        email,
+        password,
+    });
 
-        if (response) {
-            authStore.login(response.token, response.user);
-            router.push("/patients");
-        }
-    } catch (err) {
-        console.error("Signup failed:", err);
+    if (response) {
+        authStore.login(response.token, response.user);
+        router.push("/patients");
     }
 };
 

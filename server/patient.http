@@ -1,0 +1,24 @@
+### Test Patient Routes
+
+### Test Add Patient
+POST http://localhost:5000/patient/new
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NjkxNTMwNywianRpIjoiMmVjMjg0MjEtNDJjNC00M2Y5LTg0MTAtODdlYjMwMmFiZWM1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjY4MWZhZTE5ZjRkZGUwYmNlYjQzZDNjZSIsIm5iZiI6MTc0NjkxNTMwNywiY3NyZiI6ImY0Mzk2YzIyLTQ4MDQtNDBmNi1hOTY5LTlkMzIxMTg1NGRjMiJ9.l8N8L_b4yijZSy5KCnB1blArbGkoa4mWYu57sEXiwfo
+
+{
+    "supervisor": "testuser",
+    "name": "Test Patient",
+    "gender": "male",
+    "age": 30,
+    "bed": "101",
+    "department": "Cardiology",
+    "blood_type": "A+",
+    "wound": {
+        "type": "Burn",
+        "location": "Elbow",
+        "severity": "Mild",
+        "infected": false,
+        "size": 10,
+        "treatment": "Antibiotics (Oral)"
+    }
+}

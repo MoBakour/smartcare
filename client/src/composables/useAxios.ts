@@ -21,9 +21,11 @@ export const useAxios = () => {
                 data,
                 ...options,
             });
+
             return response.data;
         } catch (err: any) {
-            error.value = err.response.data.msg;
+            console.error(err);
+            error.value = err.response?.data?.error || err.message;
         } finally {
             isLoading.value = false;
         }

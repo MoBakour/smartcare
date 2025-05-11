@@ -1,44 +1,49 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import PersonalInputs from "../components/add/PersonalInputs.vue";
+import MedicalInputs from "../components/add/MedicalInputs.vue";
+import { useAxios } from "../composables/useAxios";
+import { useRouter } from "vue-router";
 
-const name = ref("");
-const sex = ref("");
-const age = ref<number | null>(null);
-const bed = ref("");
-const department = ref("");
-const woundType = ref("");
-const bloodType = ref("");
+const { request, isLoading, error } = useAxios();
+const router = useRouter();
 
-// Profile picture upload
-const avatarPreview = ref<string | null>(null);
-const avatarFile = ref<File | null>(null);
+const patientData = ref({
+    avatarFile: null,
+    avatarPreview: null,
+    name: "",
+    gender: "",
+    age: "",
+    bed: "",
+    department: "",
+    bloodType: "",
+    wound: {
+        type: "",
+        location: "",
+        severity: "",
+        infected: "",
+        size: "",
+        treatment: "",
+    },
+});
 
-const handleFileChange = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
+const handleSubmit = async () => {
+    const formData = new FormData();
 
-    if (file) {
-        avatarFile.value = file;
+    formData.append("avatar", patientData.value.avatarFile);
+    formData.append("name", patientData.value.name);
+    formData.append("gender", patientData.value.gender);
+    formData.append("age", patientData.value.age);
+    formData.append("bed", patientData.value.bed);
+    formData.append("department", patientData.value.department);
+    formData.append("blood_type", patientData.value.bloodType);
+    formData.append("wound", JSON.stringify(patientData.value.wound));
 
-        const reader = new FileReader();
-        reader.onload = () => {
-            avatarPreview.value = reader.result as string;
-        };
-        reader.readAsDataURL(file);
+    const res = await request("/patient/new", "POST", formData);
+
+    if (res) {
+        router.push(`/patients/${res.patient._id}`);
     }
-};
-
-const handleSubmit = () => {
-    console.log("Submit patient:", {
-        name: name.value,
-        sex: sex.value,
-        age: age.value,
-        bed: bed.value,
-        department: department.value,
-        woundType: woundType.value,
-        bloodType: bloodType.value,
-        avatar: avatarPreview.value,
-    });
 };
 </script>
 
@@ -55,206 +60,39 @@ const handleSubmit = () => {
             @submit.prevent="handleSubmit"
             class="flex flex-col flex-1 mt-10 mx-auto"
         >
-            <!-- form layout -->
-            <div class="w-fit">
-                <div class="flex items-start gap-10">
-                    <!-- avatar -->
-                    <label
-                        class="w-[120px] h-[120px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition"
-                        title="Upload Profile Picture"
-                        for="avatar"
-                    >
-                        <template v-if="avatarPreview">
-                            <img
-                                :src="avatarPreview"
-                                alt="Profile Preview"
-                                class="w-full h-full object-cover"
-                            />
-                        </template>
-                        <template v-else>
-                            <i-solar-user-outline class="text-5xl" />
-                        </template>
-                    </label>
+            <!-- error message -->
+            <div
+                v-if="error"
+                class="bg-crimson/10 text-crimson text-sm rounded-md p-2 mb-3"
+            >
+                {{ error }}
+            </div>
 
-                    <!-- hidden file input -->
-                    <input
-                        type="file"
-                        id="avatar"
-                        accept="image/*"
-                        class="hidden"
-                        @change="handleFileChange"
-                    />
+            <!-- personal + medical info sections -->
+            <div class="flex justify-between items-start gap-10">
+                <!-- personal info -->
+                <PersonalInputs v-model="patientData" />
 
-                    <!-- personal + medical info sections -->
-                    <div class="flex justify-between gap-10">
-                        <!-- personal info -->
-                        <div class="flex flex-col gap-4">
-                            <h2 class="text-gray-500 text-md font-semibold">
-                                Personal Information
-                            </h2>
+                <!-- border -->
+                <div
+                    class="w-[2px] h-[300px] rounded-4xl self-center bg-gray-300"
+                />
 
-                            <div class="flex flex-col gap-1">
-                                <label for="name" class="text-gray-600 text-sm"
-                                    >Patient Name</label
-                                >
-                                <input
-                                    id="name"
-                                    v-model="name"
-                                    type="text"
-                                    placeholder="Enter name"
-                                    class="rounded-md px-3 py-1.5 bg-white outline-none text-sm"
-                                />
-                            </div>
+                <!-- medical info -->
+                <MedicalInputs v-model="patientData" />
+            </div>
 
-                            <div class="flex justify-between">
-                                <button
-                                    type="button"
-                                    class="w-[80px] py-1.5 rounded-md text-white font-semibold text-sm transition hover:opacity-80 cursor-pointer"
-                                    :class="
-                                        sex === 'Male'
-                                            ? 'bg-blue-400'
-                                            : 'bg-gray-300 text-black'
-                                    "
-                                    @click="sex = 'Male'"
-                                >
-                                    Male
-                                </button>
-                                <button
-                                    type="button"
-                                    class="w-[80px] py-1.5 rounded-md text-white font-semibold text-sm transition hover:opacity-80 cursor-pointer"
-                                    :class="
-                                        sex === 'Female'
-                                            ? 'bg-pink-300'
-                                            : 'bg-gray-300 text-black'
-                                    "
-                                    @click="sex = 'Female'"
-                                >
-                                    Female
-                                </button>
-                            </div>
-
-                            <div class="flex justify-between">
-                                <div class="flex flex-col gap-1">
-                                    <label
-                                        for="age"
-                                        class="text-gray-600 text-sm"
-                                        >Age</label
-                                    >
-                                    <input
-                                        id="age"
-                                        v-model="age"
-                                        type="number"
-                                        placeholder="Age"
-                                        class="rounded-md py-1.5 pl-3 bg-white outline-none w-[80px] text-sm"
-                                    />
-                                </div>
-                                <div class="flex flex-col gap-1">
-                                    <label
-                                        for="bed"
-                                        class="text-gray-600 text-sm"
-                                        >Bed</label
-                                    >
-                                    <div class="relative">
-                                        <span
-                                            class="text-gray-400 absolute top-1/2 left-2 -translate-y-1/2"
-                                            >#</span
-                                        >
-                                        <input
-                                            id="bed"
-                                            v-model="bed"
-                                            type="number"
-                                            placeholder="Bed"
-                                            class="rounded-md py-1.5 pl-6 bg-white outline-none w-[80px] text-sm"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- border -->
-                        <div
-                            class="w-[2px] h-[240px] rounded-4xl bg-gray-300"
-                        />
-
-                        <!-- medical info -->
-                        <div class="flex flex-col gap-4">
-                            <h2 class="text-gray-500 text-md font-semibold">
-                                Medical Information
-                            </h2>
-
-                            <div class="flex flex-col gap-1">
-                                <label
-                                    for="department"
-                                    class="text-gray-600 text-sm"
-                                    >Department</label
-                                >
-                                <select
-                                    id="department"
-                                    v-model="department"
-                                    class="rounded-md px-3 py-1.5 bg-white outline-none text-sm"
-                                >
-                                    <option value="" disabled>Select</option>
-                                    <option>Cardiology</option>
-                                    <option>Neurology</option>
-                                    <option>Orthopedics</option>
-                                    <option>Emergency</option>
-                                </select>
-                            </div>
-
-                            <div class="flex flex-col gap-1">
-                                <label
-                                    for="woundType"
-                                    class="text-gray-600 text-sm"
-                                    >Wound Type</label
-                                >
-                                <select
-                                    id="woundType"
-                                    v-model="woundType"
-                                    class="rounded-md px-3 py-1.5 bg-white outline-none text-sm"
-                                >
-                                    <option value="" disabled>Select</option>
-                                    <option>Burns</option>
-                                    <option>Fracture</option>
-                                    <option>Ulcer</option>
-                                    <option>Cut</option>
-                                </select>
-                            </div>
-
-                            <div class="flex flex-col gap-1">
-                                <label
-                                    for="bloodType"
-                                    class="text-gray-600 text-sm"
-                                    >Blood Type</label
-                                >
-                                <select
-                                    id="bloodType"
-                                    v-model="bloodType"
-                                    class="rounded-md px-3 py-1.5 bg-white outline-none text-sm"
-                                >
-                                    <option value="" disabled>Select</option>
-                                    <option>O-</option>
-                                    <option>O+</option>
-                                    <option>A-</option>
-                                    <option>A+</option>
-                                    <option>B-</option>
-                                    <option>B+</option>
-                                    <option>AB-</option>
-                                    <option>AB+</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- submit button -->
-                <div class="flex justify-end mt-12">
-                    <button
-                        type="submit"
-                        class="bg-theme hover:opacity-80 transition px-8 py-2 text-white font-bold rounded-lg text-sm cursor-pointer"
-                    >
-                        Add Patient
-                    </button>
-                </div>
+            <!-- submit button -->
+            <div class="flex justify-end mt-8">
+                <button
+                    type="submit"
+                    class="bg-theme hover:opacity-80 transition w-[140px] h-[40px] text-white font-bold rounded-md text-sm cursor-pointer flex items-center justify-center disabled:opacity-50 disabled:cursor-default"
+                    :disabled="isLoading"
+                    @click="handleSubmit"
+                >
+                    <span v-if="!isLoading">Add Patient</span>
+                    <i-line-md:loading-twotone-loop v-else class="text-xl" />
+                </button>
             </div>
         </form>
     </div>

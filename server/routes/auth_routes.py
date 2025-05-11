@@ -13,11 +13,11 @@ def signup():
         data = request.get_json()
 
         if not data or not all(key in data for key in ("username", "email", "password")):
-            return jsonify({"msg": "Invalid input"}), 400
+            return jsonify({"error": "Invalid input"}), 400
 
         # check if user email already exists
         if app.db.users.find_one({"email": data["email"]}):
-            return jsonify({"msg": "Email already exists"}), 400
+            return jsonify({"error": "Email already exists"}), 400
 
         # hash password
         hashed_password = generate_password_hash(data["password"])
@@ -44,10 +44,10 @@ def signup():
 
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")
-        return jsonify({"msg": "Database error"}), 500
+        return jsonify({"error": "Database error"}), 500
     except Exception as e:
         app.logger.error(f"Unexpected error: {e}")
-        return jsonify({"msg": "An unexpected error occurred"}), 500
+        return jsonify({"error": "An unexpected error occurred"}), 500
 
 
 
@@ -59,7 +59,7 @@ def login():
         data = request.get_json()
 
         if not data or not all(key in data for key in ("email", "password")):
-            return jsonify({"msg": "Invalid input"}), 400
+            return jsonify({"error": "Invalid input"}), 400
 
         # find user in db
         user = app.db.users.find_one({
@@ -67,11 +67,11 @@ def login():
         })
 
         if not user:
-            return jsonify({"msg": "Incorrect email"}), 404
+            return jsonify({"error": "Incorrect email"}), 404
 
         # check password
         if not check_password_hash(user["password"], data["password"]):
-            return jsonify({"msg": "Incorrect password"}), 401
+            return jsonify({"error": "Incorrect password"}), 401
 
         # create JWT token
         token = create_access_token(identity=str(user["_id"]))
@@ -84,10 +84,10 @@ def login():
 
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")
-        return jsonify({"msg": "Database error"}), 500
+        return jsonify({"error": "Database error"}), 500
     except Exception as e:
         app.logger.error(f"Unexpected error: {e}")
-        return jsonify({"msg": "An unexpected error occurred"}), 500
+        return jsonify({"error": "An unexpected error occurred"}), 500
 
 
 
@@ -106,7 +106,7 @@ def get_current_user():
         user = app.db.users.find_one({"_id": ObjectId(current_user)})
 
         if not user:
-            return jsonify({"msg": "User not found"}), 404
+            return jsonify({"error": "User not found"}), 404
 
         # preprocess
         user.pop("password", None)
@@ -116,10 +116,10 @@ def get_current_user():
 
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")
-        return jsonify({"msg": "Database error"}), 500
+        return jsonify({"error": "Database error"}), 500
     except Exception as e:
         app.logger.error(f"Unexpected error: {e}")
-        return jsonify({"msg": "An unexpected error occurred"}), 500
+        return jsonify({"error": "An unexpected error occurred"}), 500
 
 
 
@@ -136,7 +136,7 @@ def delete_all_users():
         return jsonify({"msg": "All users deleted"}), 200
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")
-        return jsonify({"msg": "Database error"}), 500
+        return jsonify({"error": "Database error"}), 500
     except Exception as e:
         app.logger.error(f"Unexpected error: {e}")
-        return jsonify({"msg": "An unexpected error occurred"}), 500
+        return jsonify({"error": "An unexpected error occurred"}), 500

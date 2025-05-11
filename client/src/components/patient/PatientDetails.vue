@@ -14,7 +14,9 @@ defineProps<{ patient: IPatient }>();
             </div>
 
             <div class="flex flex-col font-semibold">
-                <span>{{ patient.gender }}</span>
+                <span>{{
+                    patient.gender[0].toUpperCase() + patient.gender.slice(1)
+                }}</span>
                 <span>{{ patient.age }}</span>
                 <span>{{ patient.blood_type }}</span>
             </div>

@@ -21,7 +21,7 @@ const {
 } = useAxios();
 
 const patient = ref<any>(null);
-const source = ref<boolean>(false);
+const connected = ref<boolean>(false);
 const eventSource = ref<EventSource | null>(null);
 const healthData = ref<any[]>([]);
 
@@ -54,6 +54,8 @@ const connectPatient = async (file: File) => {
             formData
         );
 
+        connected.value = true;
+
         // Start SSE connection
         const apiUrl = import.meta.env.VITE_API_URL;
         eventSource.value = new EventSource(
@@ -73,7 +75,6 @@ const connectPatient = async (file: File) => {
 
         // Handle connection open
         eventSource.value.onopen = () => {
-            source.value = true;
             healthData.value = []; // Reset health data
         };
 
@@ -135,14 +136,14 @@ onMounted(() => {
         <!-- health monitoring -->
         <div v-if="patient" class="mt-8">
             <div
-                v-if="isLoadingHealth"
+                v-if="isLoadingHealth || (connected && healthData.length === 0)"
                 class="w-full flex items-center justify-center"
             >
                 <i-line-md:loading-twotone-loop class="text-4xl" />
             </div>
 
             <PatientHealthIndicators
-                v-else-if="source && healthData.length"
+                v-else-if="connected && healthData.length"
                 :data="healthData"
             />
 

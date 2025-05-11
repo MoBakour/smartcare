@@ -3,7 +3,7 @@ export {};
 declare global {
     interface IUser {
         id: string;
-        name: string;
+        username: string;
         email: string;
         role: string;
     }
@@ -28,5 +28,14 @@ declare global {
         };
         created_at: string;
         updated_at: string;
+    }
+
+    interface PatientHealthIndicators {
+        Time: number;
+        "Wound Temperature": number;
+        "Wound pH": number;
+        "Moisture Level": number;
+        "Drug Release": number;
+        "Healing Time": number;
     }
 }

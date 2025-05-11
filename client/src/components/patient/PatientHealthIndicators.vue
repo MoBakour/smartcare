@@ -3,14 +3,7 @@ import Timeline from "../indicators/Timeline.vue";
 import Percentage from "../indicators/Percentage.vue";
 import Number from "../indicators/Number.vue";
 import { computed } from "vue";
-
-interface PatientHealthIndicators {
-    "Wound Temperature": number;
-    "Wound pH": number;
-    "Moisture Level": number;
-    "Drug Release": number;
-    "Healing Time": number;
-}
+import { formatNumber } from "../../utils/utils";
 
 const props = defineProps<{ data: PatientHealthIndicators[] }>();
 
@@ -81,7 +74,7 @@ const healingColor = computed(() => {
         <Number
             class="row-start-2 flex flex-col items-center gap-2"
             :label="`Wound Temperature`"
-            :num="lastData['Wound Temperature']"
+            :num="formatNumber(lastData['Wound Temperature'])"
             :temp="true"
             :unit="`°C`"
             :color="tempColor"
@@ -91,7 +84,7 @@ const healingColor = computed(() => {
         <Number
             class="row-start-2 flex flex-col items-center gap-2"
             :label="`Wound pH`"
-            :num="lastData['Wound pH']"
+            :num="formatNumber(lastData['Wound pH'])"
             :unit="`pH`"
             :color="phColor"
         />
@@ -109,14 +102,14 @@ const healingColor = computed(() => {
         <Percentage
             class="col-start-4 flex flex-col items-center gap-2"
             :label="`Moisture Level %`"
-            :percentage="lastData['Moisture Level']"
+            :percentage="formatNumber(lastData['Moisture Level'])"
         />
 
         <!-- drug -->
         <Percentage
             class="col-start-4 flex flex-col items-center gap-2"
             :label="`Drug Release %`"
-            :percentage="lastData['Drug Release']"
+            :percentage="formatNumber(lastData['Drug Release'])"
         />
     </div>
 </template>

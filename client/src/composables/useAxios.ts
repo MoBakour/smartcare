@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 export const useAxios = () => {
     const isLoading = ref(false);
-    const error = ref(null);
+    const error = ref<string | null>(null);
 
     const request = async (
         url: string,

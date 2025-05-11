@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-    modelValue: Object;
+    modelValue: any;
 }>();
 
 const emit = defineEmits(["update:modelValue"]);
@@ -45,8 +45,12 @@ const updatePatientData = (key: string, value: any) => {
                         <option value="" disabled>Select</option>
                         <option>Cardiology</option>
                         <option>Neurology</option>
-                        <option>Orthopedics</option>
-                        <option>Emergency</option>
+                        <option>ICU</option>
+                        <option>ED</option>
+                        <option>Pulmonology</option>
+                        <option>Oncology</option>
+                        <option>NICU</option>
+                        <option>PACU</option>
                     </select>
                 </div>
 

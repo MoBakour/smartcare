@@ -3,16 +3,15 @@ import { ref } from "vue";
 
 const emit = defineEmits(["connect"]);
 
-const file = ref<File | null>(null);
 const isDragging = ref(false);
 
 const handleUpload = (event: Event) => {
-    let file: File | null = null;
+    let file: File | undefined;
 
     if (event.target instanceof HTMLInputElement) {
         file = (event.target as HTMLInputElement).files?.[0];
     } else if (event.target instanceof HTMLLabelElement) {
-        file = event.dataTransfer?.files?.[0];
+        file = (event as DragEvent).dataTransfer?.files[0];
     }
 
     if (file) {

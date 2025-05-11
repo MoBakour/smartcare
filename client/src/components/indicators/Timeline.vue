@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { Line } from "vue-chartjs";
-import { useCommonStore } from "../../stores/common.store";
-
-const commonStore = useCommonStore();
 
 const props = defineProps<{ data: PatientHealthIndicators[] }>();
 
-const activeIndicator = ref("Wound Temperature");
+const activeIndicator = ref<keyof PatientHealthIndicators>("Wound Temperature");
 
 // colors
 const colors: Record<string, string> = {

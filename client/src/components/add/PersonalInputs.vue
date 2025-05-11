@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
-
 const props = defineProps<{
-    modelValue: Object;
+    modelValue: any;
 }>();
 
 const emit = defineEmits(["update:modelValue"]);

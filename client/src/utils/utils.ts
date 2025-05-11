@@ -5,3 +5,7 @@ export const formatDate = (date: Date) => {
 
     return `${dd}/${mm}/${yy}`;
 };
+
+export const formatNumber = (num: number) => {
+    return Number(num.toFixed(2));
+};

@@ -119,6 +119,11 @@ def get_patient(patient_id):
 
         # Analyze patient data
         analysis = analyze_patient(patient)
+
+        if "analysis" in analysis:
+            analysis = analysis["analysis"]
+        else:
+            analysis = None
         
         return jsonify({"patient": patient, "analysis": analysis}), 200
     

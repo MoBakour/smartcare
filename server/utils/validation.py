@@ -64,28 +64,31 @@ class ValidationError(Exception):
         self.type = "validation_error"
 
 
-def validate_signup(data):
+def validate_signup(data, optional=[]):
     error = ""    
         
     # password validation
-    if not data["password"] or len(data["password"]) == 0:
-        error = "Password is required"
-    elif len(data["password"]) < 6:
-        error = "Password must be at least 6 characters long"
+    if "password" not in optional or ("password" in data and data["password"] is not None):
+        if "password" not in data or len(data["password"]) == 0:
+            error = "Password is required"
+        elif len(data["password"]) < 6:
+            error = "Password must be at least 6 characters long"
         
     # email validation
-    if not data["email"] or len(data["email"]) == 0:
-        error = "Email is required"
-    elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', data["email"]):
-        error = "Invalid email address"
+    if "email" not in optional or ("email" in data and data["email"] is not None):
+        if "email" not in data or len(data["email"]) == 0:
+            error = "Email is required"
+        elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', data["email"]):
+            error = "Invalid email address"
 
     # username validation
-    if not data["username"] or len(data["username"]) == 0:
-        error = "Username is required"
-    elif len(data["username"]) > 24:
-        error = "Username must be max 24 characters"
-    elif len(data["username"]) < 3:
-        error = "Username must be at least 3 characters long"
+    if "username" not in optional or ("username" in data and data["username"] is not None):
+        if "username" not in data or len(data["username"]) == 0:
+            error = "Username is required"
+        elif len(data["username"]) > 24:
+            error = "Username must be max 24 characters"
+        elif len(data["username"]) < 3:
+            error = "Username must be at least 3 characters long"
 
     if error:
         raise ValidationError(error)

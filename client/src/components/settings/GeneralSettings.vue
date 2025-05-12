@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useAuthStore } from "../../stores/auth.store";
+import { useAxios } from "../../composables/useAxios";
 
 const authStore = useAuthStore();
+const { request, error, isLoading } = useAxios();
 
-const username = ref(authStore.user?.username);
-const email = ref(authStore.user?.email);
+const username = ref<string>(authStore.user?.username || "");
+const email = ref<string>(authStore.user?.email || "");
 const password = ref("");
 
 const avatarPreview = ref<string | null>(null);
@@ -29,17 +31,27 @@ const handleFileChange = (event: Event) => {
 const isUnchanged = computed(() => {
     return (
         username.value === authStore.user?.username &&
-        email.value === authStore.user?.email
+        email.value === authStore.user?.email &&
+        !avatarFile.value
     );
 });
 
-const handleSave = () => {
-    console.log("Unimplemented:", {
-        username: username.value,
-        email: email.value,
-        password: password.value,
-        avatar: avatarPreview.value,
-    });
+const handleSave = async () => {
+    try {
+        const formData = new FormData();
+        formData.append("username", username.value);
+        formData.append("email", email.value);
+        formData.append("password", password.value);
+
+        if (avatarFile.value) {
+            formData.append("avatar", avatarFile.value);
+        }
+
+        const data = await request("/user/update", "PUT", formData);
+        authStore.setUser(data.user);
+    } catch (error) {
+        console.error("Error saving settings:", error);
+    }
 };
 </script>
 
@@ -102,10 +114,16 @@ const handleSave = () => {
                     <div class="flex justify-end">
                         <button
                             type="submit"
-                            class="shadow-md mt-2 w-[200px] bg-theme transition hover:opacity-80 px-6 py-2 text-white font-bold rounded-lg text-sm cursor-pointer disabled:opacity-50"
-                            :disabled="!username || !email || isUnchanged"
+                            class="shadow-md mt-2 w-[200px] h-[38px] flex items-center justify-center bg-theme transition hover:opacity-80 text-white font-bold rounded-lg text-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+                            :disabled="
+                                !username || !email || isUnchanged || isLoading
+                            "
                         >
-                            Save Changes
+                            <i-line-md:loading-twotone-loop
+                                v-if="isLoading"
+                                class="text-xl"
+                            />
+                            <span v-else>Save Changes</span>
                         </button>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ from marshmallow import ValidationError
 from utils.validation import NewPatientSchema
 from utils.init_models import predict_healing, predict_infection
 from utils.handlers import stream_avatar
+from utils.utils import analyze_patient
 import os
 import json
 import uuid
@@ -115,8 +116,11 @@ def get_patient(patient_id):
         patient["_id"] = str(patient["_id"])
         patient["created_at"] = str(patient["created_at"])
         patient["updated_at"] = str(patient["updated_at"])
+
+        # Analyze patient data
+        analysis = analyze_patient(patient)
         
-        return jsonify({"patient": patient}), 200
+        return jsonify({"patient": patient, "analysis": analysis}), 200
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -312,6 +316,31 @@ def delete_all_patients():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
+@patient_bp.route("/analyze/<string:patient_id>", methods=["GET"])
+@jwt_required()
+def analyze_patient_route(patient_id):
+    try:
+        # Get the current user identity
+        current_user = get_jwt_identity()
+
+        # Check if the patient exists
+        patient = app.db.patients.find_one({"_id": ObjectId(patient_id), "supervisor": current_user})
+        if not patient:
+            return jsonify({"error": "Patient not found"}), 404
+
+        # Analyze patient data
+        response = analyze_patient(patient)
+        
+        if "error" in response:
+            return jsonify({"error": response["error"]}), 500
+            
+        return jsonify(response), 200
+
+    except Exception as e:
+        app.logger.error(f"Error in AI analysis: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 
 
 

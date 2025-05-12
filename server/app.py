@@ -4,7 +4,7 @@ from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
 from flask_cors import CORS
 import os
-
+import google.generativeai as genai
 from utils.init_models import initialize_models
 
 from routes.auth_routes import auth_bp
@@ -21,6 +21,9 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = False
+
+# Configure Google Generative AI
+genai.configure(api_key=os.environ.get('GENAI_API_KEY'))
 
 # manage uploads
 app.config['UPLOAD_FOLDER'] = "uploads"

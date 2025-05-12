@@ -22,3 +22,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsI
         "treatment": "Antibiotics (Oral)"
     }
 }
+
+
+### Analyze Patient Data
+GET http://localhost:5000/patient/analyze/68226ed9fba69d9886cf68d3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzA4NzA0NCwianRpIjoiZjQ3ODQ1NTQtYTU3Ny00ZWEzLWJjOWItMzViZmNmOWZiNzMwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjY4MjI2YzJjZmJhNjlkOTg4NmNmNjhkMCIsIm5iZiI6MTc0NzA4NzA0NCwiY3NyZiI6ImI0MjlkZjdhLWI0ZmQtNDg4OS04ZjMxLWNhN2JmZTRiZDMzZCJ9.wjJo0be4kCgmCANen9NkyBdOaejZ5GKb9-Kv9jvNFtE
+Content-Type: application/json
+
+
+

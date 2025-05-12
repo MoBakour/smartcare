@@ -35,6 +35,8 @@ declare module 'vue' {
     IMdiPlus: typeof import('~icons/mdi/plus')['default']
     IMdiSettings: typeof import('~icons/mdi/settings')['default']
     IMdiUpload: typeof import('~icons/mdi/upload')['default']
+    'IMingcute:aiFill': typeof import('~icons/mingcute/ai-fill')['default']
+    IMingcuteAiFill: typeof import('~icons/mingcute/ai-fill')['default']
     IMynauiArrowLongLeft: typeof import('~icons/mynaui/arrow-long-left')['default']
     IMynauiSearch: typeof import('~icons/mynaui/search')['default']
     ISolarArrowRightOutline: typeof import('~icons/solar/arrow-right-outline')['default']

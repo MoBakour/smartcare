@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useCommonStore } from "../stores/common.store";
 import PatientMainInfo from "../components/patient/PatientMainInfo.vue";
 import PatientDetails from "../components/patient/PatientDetails.vue";
@@ -85,6 +85,29 @@ const connectPatient = async (file: File) => {
     }
 };
 
+const parsedAnalysis = computed(() => {
+    const sections = patient.value.analysis.split("**").filter(Boolean);
+    const htmlParts = [];
+
+    for (let i = 0; i < sections.length; i += 2) {
+        const title = sections[i].replace(":", "").trim();
+        const body = sections[i + 1] || "";
+        const bullets = body
+            .split("\n")
+            .map((line: string) => line.trim())
+            .filter((line: string) => line.startsWith("*"))
+            .map((line: string) => line.replace(/^\*+/, "").trim());
+
+        htmlParts.push(
+            `<h3 class="text-lg font-semibold">${title}</h3><ul class="pl-4">${bullets
+                .map((b: string) => `<li class="text-gray-500">${b}</li>`)
+                .join("")}</ul>`
+        );
+    }
+
+    return htmlParts.join("");
+});
+
 // Cleanup on component unmount
 onUnmounted(() => {
     if (eventSource.value) {
@@ -107,7 +130,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>
+    <div class="mb-10">
         <!-- breadcrumb -->
         <div class="flex items-center gap-2">
             <router-link to="/patients" class="hover:underline"
@@ -144,10 +167,19 @@ onMounted(() => {
                 <i-line-md:loading-twotone-loop class="text-4xl" />
             </div>
 
-            <PatientHealthIndicators
-                v-else-if="connected && healthData.length"
-                :data="healthData"
-            />
+            <template v-else-if="connected && healthData.length">
+                <PatientHealthIndicators :data="healthData" />
+
+                <div class="mt-4 bg-gray-200 p-4 rounded-lg">
+                    <h2
+                        class="flex items-center gap-2 text-xl w-fit font-bold pb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500"
+                    >
+                        <span>AI Patient Analysis</span>
+                        <i-mingcute:ai-fill class="text-2xl text-purple-500" />
+                    </h2>
+                    <div class="pl-4" v-html="parsedAnalysis"></div>
+                </div>
+            </template>
 
             <ConnectPatient v-else @connect="connectPatient" />
         </div>

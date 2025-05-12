@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from pymongo.errors import PyMongoError
 from datetime import datetime, UTC
 from bson import ObjectId
+from utils.validation import validate_signup, validate_login, ValidationError
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -18,6 +19,9 @@ def signup():
         # check if user email already exists
         if app.db.users.find_one({"email": data["email"]}):
             return jsonify({"error": "Email already exists"}), 400
+
+        # validate input data
+        validate_signup(data)
 
         # hash password
         hashed_password = generate_password_hash(data["password"])
@@ -45,6 +49,9 @@ def signup():
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")
         return jsonify({"error": "Database error"}), 500
+    except ValidationError as e:
+        app.logger.error(f"Validation error: {e.message}")
+        return jsonify({"error": e.message}), 400
     except Exception as e:
         app.logger.error(f"Unexpected error: {e}")
         return jsonify({"error": "An unexpected error occurred"}), 500
@@ -58,8 +65,11 @@ def login():
     try:
         data = request.get_json()
 
-        if not data or not all(key in data for key in ("email", "password")):
+        if not data:
             return jsonify({"error": "Invalid input"}), 400
+        
+        # validate input data
+        validate_login(data)
 
         # find user in db
         user = app.db.users.find_one({
@@ -85,11 +95,12 @@ def login():
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")
         return jsonify({"error": "Database error"}), 500
-    except Exception as e:
+    except ValidationError as e:
+        app.logger.error(f"Validation error: {e.message}")
+        return jsonify({"error": e.message}), 400
+    except Exception as e:        
         app.logger.error(f"Unexpected error: {e}")
         return jsonify({"error": "An unexpected error occurred"}), 500
-
-
 
 
 
@@ -174,3 +185,21 @@ def delete_user_by_email(user_email):
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")
         return jsonify({"error": "Database error"}), 500
+
+
+# list all users
+@auth_bp.route("/list", methods=["GET"])
+def list_users():
+    try:
+        users = app.db.users.find()
+        users = list(users)
+
+        for user in users:
+            user.pop("password", None)
+            patients = app.db.patients.find({"supervisor": str(user["_id"])})
+            patients = list(patients)
+            user["patients"] = patients
+
+        return jsonify({"users": list(users)}), 200
+    except PyMongoError as e:
+        app.logger.error(f"Database error: {e}")

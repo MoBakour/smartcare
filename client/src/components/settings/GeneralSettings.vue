@@ -87,7 +87,7 @@ const handleSave = () => {
                     />
                     <input
                         v-model="email"
-                        type="email"
+                        type="text"
                         placeholder="Email"
                         class="shadow-md rounded-md px-3 py-1.5 bg-white outline-none text-sm w-[250px]"
                     />

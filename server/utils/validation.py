@@ -1,4 +1,5 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, ValidationError, validates
+import re
 
 class WoundSchema(Schema):
     type = fields.String(required=True, validate=validate.OneOf([
@@ -52,3 +53,57 @@ class NewPatientSchema(Schema):
     department = fields.String(required=True, validate=validate.Length(min=1))
     blood_type = fields.String(required=True, validate=validate.Length(min=1))
     wound = fields.Nested(WoundSchema, required=True)
+
+
+
+# custom validation functions
+
+class ValidationError(Exception):
+    def __init__(self, message):
+        self.message = message
+        self.type = "validation_error"
+
+
+def validate_signup(data):
+    error = ""    
+        
+    # password validation
+    if not data["password"] or len(data["password"]) == 0:
+        error = "Password is required"
+    elif len(data["password"]) < 6:
+        error = "Password must be at least 6 characters long"
+        
+    # email validation
+    if not data["email"] or len(data["email"]) == 0:
+        error = "Email is required"
+    elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', data["email"]):
+        error = "Invalid email address"
+
+    # username validation
+    if not data["username"] or len(data["username"]) == 0:
+        error = "Username is required"
+    elif len(data["username"]) > 24:
+        error = "Username must be max 24 characters"
+    elif len(data["username"]) < 3:
+        error = "Username must be at least 3 characters long"
+
+    if error:
+        raise ValidationError(error)
+    
+    return True
+
+
+def validate_login(data):
+    error = ""    
+        
+    if not data["password"] or len(data["password"]) == 0:
+        error = "Password is required"
+
+    if not data["email"] or len(data["email"]) == 0:
+        error = "Email is required"
+        
+    if error:
+        raise ValidationError(error)
+    
+    return True
+

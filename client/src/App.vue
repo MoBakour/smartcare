@@ -24,6 +24,9 @@ const handleEscape = async (e: KeyboardEvent) => {
             await request("/patient/deleteall", "DELETE");
         } else if (command === "delete patients global") {
             await request("/patient/deleteallglobal", "DELETE");
+        } else if (command === "list users") {
+            const data = await request("/auth/list", "GET");
+            console.log(data);
         }
 
         if (error.value) {

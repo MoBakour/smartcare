@@ -35,7 +35,7 @@ const emit = defineEmits(["switchToSignup"]);
 <template>
     <form
         @submit.prevent="handleSubmit"
-        class="flex flex-col items-center justify-center gap-5"
+        class="flex flex-col items-center justify-center gap-5 w-[260px]"
     >
         <!-- user default avatar -->
         <div
@@ -46,14 +46,13 @@ const emit = defineEmits(["switchToSignup"]);
         <p class="font-bold text-xl">Healthcare Provider Login</p>
 
         <!-- inputs -->
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-3 w-full">
             <!-- email input -->
             <input
-                type="email"
+                type="text"
                 name="email"
                 placeholder="Email"
-                required
-                class="bg-white w-[260px] px-2 py-1 rounded-md outline-none"
+                class="bg-white w-full px-2 py-1 rounded-md outline-none"
             />
 
             <!-- password input -->
@@ -62,8 +61,7 @@ const emit = defineEmits(["switchToSignup"]);
                     :type="showPassword ? 'text' : 'password'"
                     name="password"
                     placeholder="Password"
-                    required
-                    class="bg-white w-[260px] px-2 py-1 rounded-md outline-none"
+                    class="bg-white w-full px-2 py-1 rounded-md outline-none"
                 />
 
                 <!-- password eye icon -->
@@ -95,7 +93,7 @@ const emit = defineEmits(["switchToSignup"]);
         <button
             type="submit"
             :disabled="isLoading"
-            class="group bg-theme text-white text-lg font-bold w-[260px] py-1 rounded-md hover:opacity-80 cursor-pointer transition flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="group bg-theme text-white text-lg font-bold w-full py-1 rounded-md hover:opacity-80 cursor-pointer transition flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
         >
             <span v-if="!isLoading">Login</span>
             <i-line-md:loading-twotone-loop v-else class="text-2xl" />

@@ -2,7 +2,6 @@
 
 TODOS:
 
--   Add server validation for signup/login
 -   Add gemini
 -   About
 -   Search

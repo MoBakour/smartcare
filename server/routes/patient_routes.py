@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, UTC
 from bson import ObjectId
 from marshmallow import ValidationError
-from utils.validation_schema import NewPatientSchema
+from utils.validation import NewPatientSchema
 from utils.init_models import predict_healing, predict_infection
 import os
 import json

@@ -121,11 +121,9 @@ def get_patient(patient_id):
         analysis = analyze_patient(patient)
 
         if "analysis" in analysis:
-            analysis = analysis["analysis"]
-        else:
-            analysis = None
+            patient["analysis"] = analysis["analysis"]
         
-        return jsonify({"patient": patient, "analysis": analysis}), 200
+        return jsonify({"patient": patient}), 200
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500

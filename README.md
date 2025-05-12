@@ -2,7 +2,6 @@
 
 TODOS:
 
--   Add gemini
 -   About
 -   Search
 -   Delete patient

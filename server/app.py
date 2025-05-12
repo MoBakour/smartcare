@@ -7,9 +7,10 @@ import os
 
 from utils.init_models import initialize_models
 
-from routes.prediction_routes import prediction_bp
 from routes.auth_routes import auth_bp
+from routes.user_routes import user_bp
 from routes.patient_routes import patient_bp
+from routes.prediction_routes import prediction_bp
 
 # load env variables
 load_dotenv()
@@ -36,8 +37,9 @@ app.db = mongo.cx[os.environ.get("DB_NAME")]
 
 # register blueprints
 app.register_blueprint(auth_bp, url_prefix="/auth")
-app.register_blueprint(prediction_bp, url_prefix="/predict")
+app.register_blueprint(user_bp, url_prefix="/user")
 app.register_blueprint(patient_bp, url_prefix="/patient")
+app.register_blueprint(prediction_bp, url_prefix="/predict")
 
 @app.route('/health', methods=['GET'])
 def health_check():

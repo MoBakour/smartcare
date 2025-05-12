@@ -11,12 +11,12 @@ const handleEscape = async (e: KeyboardEvent) => {
 
         if (!command) return;
         if (command === "delete user") {
-            await request("/auth/delete", "DELETE");
+            await request("/user/delete", "DELETE");
         } else if (command.startsWith("delete user ")) {
             const id = command.split(" ")[2];
-            await request(`/auth/delete/${id}`, "DELETE");
+            await request(`/user/delete/${id}`, "DELETE");
         } else if (command === "delete users global") {
-            await request("/auth/deleteallglobal", "DELETE");
+            await request("/user/deleteallglobal", "DELETE");
         } else if (command.startsWith("delete patient ")) {
             const id = command.split(" ")[2];
             await request(`/patient/delete/${id}`, "DELETE");
@@ -25,7 +25,7 @@ const handleEscape = async (e: KeyboardEvent) => {
         } else if (command === "delete patients global") {
             await request("/patient/deleteallglobal", "DELETE");
         } else if (command === "list users") {
-            const data = await request("/auth/list", "GET");
+            const data = await request("/user/list", "GET");
             console.log(data);
         }
 

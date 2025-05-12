@@ -35,9 +35,9 @@ Content-Type: application/json
 }
 
 ### Test Get Current User
-GET http://localhost:5000/auth/user
+GET http://localhost:5000/user/get
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NjM4MTEwMiwianRpIjoiODFhYWRlYzAtNmQzZi00YjBmLThjOGYtYWY0NjM2N2M5MWViIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjY4MTdhOTJlMDI4NjQ5YzRmOTE0Y2JhYiIsIm5iZiI6MTc0NjM4MTEwMiwiY3NyZiI6Ijc3M2U4NzBmLWExZjYtNGIxNC05MWZkLWYzYTE3YTIyYTAxYiIsImV4cCI6MTc0NjM4MjAwMn0.lR8LjAPQic__ZfvLq9O3kNEW8cmw9nrMh148Eq2e7dA
 
 ### Test Delete All Users
-DELETE http://localhost:5000/auth/deleteall
+DELETE http://localhost:5000/user/deleteall
 Content-Type: application/json

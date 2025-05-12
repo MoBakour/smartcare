@@ -2,7 +2,6 @@
 
 TODOS:
 
--   Add account pfp (header, settings)
 -   Add gemini
 -   About
 -   Search

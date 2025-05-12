@@ -2,9 +2,10 @@
 import { ref, computed } from "vue";
 import { useAuthStore } from "../../stores/auth.store";
 import { useAxios } from "../../composables/useAxios";
+import { toast } from "vue3-toastify";
 
 const authStore = useAuthStore();
-const { request, error, isLoading } = useAxios();
+const { request, isLoading, error } = useAxios();
 
 const username = ref<string>(authStore.user?.username || "");
 const email = ref<string>(authStore.user?.email || "");
@@ -12,6 +13,10 @@ const password = ref("");
 
 const avatarPreview = ref<string | null>(null);
 const avatarFile = ref<File | null>(null);
+
+const avatarUrl = computed(() => {
+    return `${import.meta.env.VITE_API_URL}/user/avatar/${authStore.user?._id}`;
+});
 
 const handleFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
@@ -32,6 +37,7 @@ const isUnchanged = computed(() => {
     return (
         username.value === authStore.user?.username &&
         email.value === authStore.user?.email &&
+        password.value === "" &&
         !avatarFile.value
     );
 });
@@ -48,9 +54,16 @@ const handleSave = async () => {
         }
 
         const data = await request("/user/update", "PUT", formData);
-        authStore.setUser(data.user);
-    } catch (error) {
-        console.error("Error saving settings:", error);
+
+        if (data) {
+            authStore.setUser(data.user);
+            password.value = "";
+
+            // show toast
+            toast.success("Profile updated successfully");
+        }
+    } catch (err: any) {
+        console.error("Error saving settings:", err);
     }
 };
 </script>
@@ -68,9 +81,9 @@ const handleSave = async () => {
                     for="avatar"
                     class="shadow-lg w-[120px] h-[120px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition"
                 >
-                    <template v-if="avatarPreview">
+                    <template v-if="avatarPreview || authStore.user?.avatar">
                         <img
-                            :src="avatarPreview"
+                            :src="avatarPreview || avatarUrl"
                             alt="Profile Preview"
                             class="w-full h-full object-cover"
                         />
@@ -109,6 +122,14 @@ const handleSave = async () => {
                         placeholder="Password"
                         class="shadow-md rounded-md px-3 py-1.5 bg-white outline-none text-sm w-[250px]"
                     />
+
+                    <!-- error message -->
+                    <p
+                        v-if="error"
+                        class="text-crimson bg-crimson/10 rounded-md px-3 py-1.5 text-sm text-center w-[250px]"
+                    >
+                        {{ error }}
+                    </p>
 
                     <!-- save button -->
                     <div class="flex justify-end">

@@ -176,8 +176,8 @@ const username = computed(() => {
             class="fixed inset-0 flex items-center justify-center bg-black/70 z-10 transition-all"
             :class="{ 'opacity-0 pointer-events-none': !showLogoutPopup }"
         >
-            <div class="bg-white p-5 rounded-lg">
-                <p>Are you sure you want to logout?</p>
+            <div class="bg-white p-5 rounded-lg w-[300px]">
+                <p class="text-center">Are you sure you want to logout?</p>
                 <div class="flex flex-col gap-2 mt-5">
                     <button
                         class="bg-crimson text-white font-bold w-full h-[30px] text-sm rounded-md flex items-center justify-center cursor-pointer hover:opacity-80 transition"

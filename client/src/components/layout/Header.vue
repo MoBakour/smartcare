@@ -6,6 +6,10 @@ const authStore = useAuthStore();
 const username = computed(() => {
     return authStore.user?.username.split(" ")[0];
 });
+
+const avatarUrl = computed(() => {
+    return `${import.meta.env.VITE_API_URL}/user/avatar/${authStore.user?._id}`;
+});
 </script>
 
 <template>
@@ -27,9 +31,15 @@ const username = computed(() => {
                 <span>{{ username }}</span>
             </p>
             <div
-                class="w-[40px] h-[40px] bg-[#D9D9D9] rounded-full flex items-center justify-center"
+                class="w-[40px] h-[40px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
             >
-                <i-solar-user-outline class="text-2xl" />
+                <img
+                    v-if="authStore.user?.avatar"
+                    :src="avatarUrl"
+                    alt="avatar"
+                    class="w-full h-full object-cover"
+                />
+                <i-solar-user-outline v-else class="text-2xl" />
             </div>
         </div>
     </header>

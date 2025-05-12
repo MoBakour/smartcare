@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import PersonalInputs from "../components/add/PersonalInputs.vue";
 import MedicalInputs from "../components/add/MedicalInputs.vue";
 import { useAxios } from "../composables/useAxios";
 import { useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
 
 const { request, isLoading, error } = useAxios();
 const router = useRouter();
@@ -42,7 +43,7 @@ const handleSubmit = async () => {
     const res = await request("/patient/new", "POST", formData);
 
     if (res) {
-        router.push(`/patients/${res.patient._id}`);
+        router.push(`/patients/${res.patient._id}?new=true`);
     }
 };
 </script>

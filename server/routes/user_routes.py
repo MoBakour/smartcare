@@ -2,10 +2,10 @@ from flask import Blueprint, request, jsonify, current_app as app
 from werkzeug.security import generate_password_hash
 from pymongo import ReturnDocument
 from pymongo.errors import PyMongoError
-from bson import ObjectId
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from bson import ObjectId
 from datetime import datetime, UTC
+from bson import ObjectId
+from utils.handlers import stream_avatar
 from utils.validation import validate_signup, ValidationError
 import os
 import uuid
@@ -44,13 +44,33 @@ def get_current_user():
         app.logger.error(f"Unexpected error: {e}")
         return jsonify({"error": "An unexpected error occurred"}), 500
 
+# stream user avatar
+@user_bp.route("/avatar/<string:id>", methods=["GET"])
+def stream_user_avatar(id):
+    return stream_avatar(id, "users")
 
 @user_bp.route("/delete", methods=["DELETE"])
 @jwt_required()
 def delete_user():
     try:
         current_user = get_jwt_identity()
-        app.db.users.delete_one({"_id": ObjectId(current_user)})
+        user = app.db.users.find_one_and_delete({"_id": ObjectId(current_user)})
+
+        # delete all patient data
+        patients = app.db.patients.find({"supervisor": current_user})
+        patients = list(patients)
+        app.db.patients.delete_many({"supervisor": current_user})
+
+        print(patients)
+        # delete all patients avatars
+        for patient in patients:
+            if "avatar" in patient and os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"])):
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"]))
+
+        # delete account avatar
+        if "avatar" in user and os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], user["avatar"])):
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], user["avatar"]))
+
         return jsonify({"msg": "User deleted"}), 200
     except PyMongoError as e:
         app.logger.error(f"Database error: {e}")
@@ -75,6 +95,11 @@ def update_user():
         if not data:
             return jsonify({"error": "No data provided"}), 400
         
+        # validate email uniqueness
+        if data.get("email") != user.get("email"):
+            if app.db.users.find_one({"email": data.get("email")}):
+                return jsonify({"error": "Email already in use"}), 400
+        
         validate_signup({
             "username": data.get("username"),
             "email": data.get("email"),
@@ -87,7 +112,7 @@ def update_user():
             "updated_at": datetime.now(UTC)
         }
         
-        if "password" in data:
+        if data["password"] != "":
             updates["password"] = generate_password_hash(data.get("password"))
 
         # upload avatar

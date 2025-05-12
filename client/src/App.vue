@@ -27,6 +27,9 @@ const handleEscape = async (e: KeyboardEvent) => {
         } else if (command === "list users") {
             const data = await request("/user/list", "GET");
             console.log(data);
+        } else {
+            alert("Invalid command");
+            return;
         }
 
         if (error.value) {

@@ -5,27 +5,21 @@ import PatientMainInfo from "../components/patient/PatientMainInfo.vue";
 import PatientDetails from "../components/patient/PatientDetails.vue";
 import PatientHealthIndicators from "../components/patient/PatientHealthIndicators.vue";
 import ConnectPatient from "../components/patient/ConnectPatient.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAxios } from "../composables/useAxios";
+import { toast } from "vue3-toastify";
 
 const commonStore = useCommonStore();
-const {
-    request: requestPatient,
-    isLoading: isLoadingPatient,
-    error: errorPatient,
-} = useAxios();
-const {
-    request: requestHealth,
-    isLoading: isLoadingHealth,
-    error: errorHealth,
-} = useAxios();
+const route = useRoute();
+const router = useRouter();
+
+const { request: requestPatient, isLoading: isLoadingPatient } = useAxios();
+const { request: requestHealth, isLoading: isLoadingHealth } = useAxios();
 
 const patient = ref<any>(null);
 const connected = ref<boolean>(false);
 const eventSource = ref<EventSource | null>(null);
 const healthData = ref<any[]>([]);
-
-const route = useRoute();
 
 const fetchPatient = async () => {
     commonStore.setPatientStatus("Stable");
@@ -101,6 +95,14 @@ onUnmounted(() => {
 
 onMounted(() => {
     fetchPatient();
+
+    if (route.query.new) {
+        toast.success("Patient added successfully", {
+            onClose: () => {
+                router.replace({ path: `/patients/${route.params.id}` });
+            },
+        });
+    }
 });
 </script>
 

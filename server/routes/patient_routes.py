@@ -5,6 +5,7 @@ from bson import ObjectId
 from marshmallow import ValidationError
 from utils.validation import NewPatientSchema
 from utils.init_models import predict_healing, predict_infection
+from utils.handlers import stream_avatar
 import os
 import json
 import uuid
@@ -124,36 +125,7 @@ def get_patient(patient_id):
 # stream patient avatar
 @patient_bp.route("/avatar/<string:patient_id>", methods=["GET"])
 def stream_patient_avatar(patient_id):
-    try:
-        # Check if the patient exists
-        patient = app.db.patients.find_one({"_id": ObjectId(patient_id)})
-        if not patient:
-            return jsonify({"error": "Patient not found"}), 404
-        
-        # Get the avatar file path
-        avatar_path = os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"])
-
-        # Get file extension from avatar filename
-        extension = patient["avatar"].split('.')[-1].lower()
-        
-        # Map common image extensions to MIME types
-        mime_types = {
-            'jpg': 'image/jpeg',
-            'jpeg': 'image/jpeg', 
-            'png': 'image/png',
-            'gif': 'image/gif',
-        }
-        
-        # Get correct MIME type or default to jpeg
-        mime_type = mime_types.get(extension, 'image/jpeg')
-
-        # Stream the avatar file with correct MIME type
-        return send_file(avatar_path, mimetype=mime_type)
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
+    return stream_avatar(patient_id, "patients")
 
 
 
@@ -315,9 +287,6 @@ def delete_patient(patient_id):
         return jsonify({"error": str(e)}), 500
 
 
-
-
-
 # delete all patients
 @patient_bp.route("/deleteall", methods=["DELETE"])
 @jwt_required()
@@ -331,13 +300,11 @@ def delete_all_patients():
         patients = list(patients)
 
         # Delete all patients supervised by the current user
-        result = app.db.patients.delete_many({"supervisor": current_user})
-        if result.deleted_count == 0:
-            return jsonify({"error": "No patients found for deletion"}), 404
+        app.db.patients.delete_many({"supervisor": current_user})
         
         # delete all patient avatars from server
         for patient in patients:
-            if patient["avatar"]:
+            if patient["avatar"] and os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"])):
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"]))
 
         return jsonify({"msg": "All patients deleted successfully"}), 200

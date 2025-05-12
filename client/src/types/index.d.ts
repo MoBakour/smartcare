@@ -2,10 +2,10 @@ export {};
 
 declare global {
     interface IUser {
-        id: string;
+        _id: string;
         username: string;
         email: string;
-        role: string;
+        avatar: string;
     }
 
     interface IPatient {

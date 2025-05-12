@@ -12,3 +12,7 @@
 * {
     font-family: "Quicksand", sans-serif;
 }
+
+:root {
+    --toastify-color-success: #50e3c2 !important;
+}

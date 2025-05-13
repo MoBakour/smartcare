@@ -23,8 +23,6 @@ def get_current_user():
         # get current user from JWT token
         current_user = get_jwt_identity()
 
-        print(f"Current user ID: {current_user}")
-
         # find user in db
         user = app.db.users.find_one({"_id": ObjectId(current_user)})
 
@@ -61,7 +59,6 @@ def delete_user():
         patients = list(patients)
         app.db.patients.delete_many({"supervisor": current_user})
 
-        print(patients)
         # delete all patients avatars
         for patient in patients:
             if "avatar" in patient and os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], patient["avatar"])):

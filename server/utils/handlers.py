@@ -5,8 +5,6 @@ import os
 
 # handler for avatar streaming
 def stream_avatar(id, collection):
-    print(id, collection)
-
     try:
         # Check if the patient exists
         item = app.db[collection].find_one({"_id": ObjectId(id)})

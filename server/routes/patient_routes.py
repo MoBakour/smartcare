@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from utils.validation import NewPatientSchema
 from utils.init_models import predict_healing, predict_infection
 from utils.handlers import stream_avatar
-from utils.utils import analyze_patient
+from utils.utils import analyze_patient, format_data, calculate_healing_time
 import os
 import json
 import uuid
@@ -112,20 +112,26 @@ def get_patient(patient_id):
         if not patient:
             return jsonify({"error": "Patient not found"}), 404
 
-        # Convert ObjectId to string for JSON serialization
-        patient["_id"] = str(patient["_id"])
-        patient["created_at"] = str(patient["created_at"])
-        patient["updated_at"] = str(patient["updated_at"])
+        # Predict healing time left
+        patient_data = format_data(patient, "patient_data")
+        total_healing_time = predict_healing(patient_data)
+        patient["healing_time_left"] = calculate_healing_time(total_healing_time, patient["created_at"])
 
         # Analyze patient data
         analysis = analyze_patient(patient)
 
         if "analysis" in analysis:
             patient["analysis"] = analysis["analysis"]
-        
+
+        # Convert ObjectId to string for JSON serialization
+        patient["_id"] = str(patient["_id"])
+        patient["created_at"] = str(patient["created_at"])
+        patient["updated_at"] = str(patient["updated_at"])
+
         return jsonify({"patient": patient}), 200
     
     except Exception as e:
+        app.logger.error(f"Error in get_patient: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -195,40 +201,24 @@ def stream_health_data(patient_id):
                 with open(filepath, 'r') as csvfile:
                     reader = csv.DictReader(csvfile)
                     for row in reader:
-                        # Convert string values to numbers
-                        data = {
-                            'Time': float(row['Time']),
-                            'Wound Temperature': float(row['Wound Temperature']), 
-                            'Wound pH': float(row['Wound pH']),
-                            'Moisture Level': float(row['Moisture Level']),
-                            'Drug Release': float(row['Drug Release']),
-                        }
-
-                        patient_data = {
-                            'Wound Type': patient['wound']['type'],
-                            'Location': patient['wound']['location'],
-                            'Severity': patient['wound']['severity'],
-                            'Infected': patient['wound']['infected'],
-                            'Patient Age': patient['age'],
-                            'Size': patient['wound']['size'],
-                            'Treatment': patient['wound']['treatment']
-                        }
+                        # Format data
+                        health_data = format_data(row, "health_data")
+                        patient_data = format_data(patient, "patient_data")                        
 
                         # prediction
-                        infection = predict_infection(data)
+                        infection = predict_infection(health_data)
                         total_healing_time = predict_healing(patient_data) # in days
                         
                         # calculate time left based on created_at
-                        days_elapsed = (datetime.now(UTC) - patient['created_at'].replace(tzinfo=UTC)).days
-                        healing_time_left = max(0, total_healing_time - days_elapsed)
+                        healing_time_left = calculate_healing_time(total_healing_time, patient["created_at"])
 
                         # update numeric row
-                        data['Infection'] = infection[0]
-                        data['Healing Time'] = healing_time_left
+                        health_data['Infection'] = infection[0]
+                        health_data['Healing Time'] = healing_time_left
 
                         # Convert row to JSON and send
-                        yield f"data: {json.dumps(data)}\n\n"
-                        time.sleep(2)
+                        yield f"data: {json.dumps(health_data)}\n\n"
+                        time.sleep(1.5)
             finally:
                 # delete the file after streaming is complete
                 try:
@@ -250,6 +240,27 @@ def stream_health_data(patient_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
             
+
+
+# search patient by name
+@patient_bp.route("/search/<string:patient_name>", methods=["GET"])
+@jwt_required()
+def search_patient(patient_name):
+    try:
+        current_user = get_jwt_identity()
+        patients = app.db.patients.find({"supervisor": current_user, "name": {"$regex": patient_name, "$options": "i"}})
+        patients = list(patients)
+
+        # Convert ObjectId to string for JSON serialization
+        for patient in patients:
+            patient["_id"] = str(patient["_id"])
+            patient["created_at"] = str(patient["created_at"])
+            patient["updated_at"] = str(patient["updated_at"])
+
+        return jsonify({"patients": patients}), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 

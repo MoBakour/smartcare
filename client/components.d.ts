@@ -36,6 +36,7 @@ declare module 'vue' {
     IMdiSettings: typeof import('~icons/mdi/settings')['default']
     IMdiUpload: typeof import('~icons/mdi/upload')['default']
     'IMingcute:aiFill': typeof import('~icons/mingcute/ai-fill')['default']
+    'IMingcute:userLine': typeof import('~icons/mingcute/user-line')['default']
     IMingcuteAiFill: typeof import('~icons/mingcute/ai-fill')['default']
     IMynauiArrowLongLeft: typeof import('~icons/mynaui/arrow-long-left')['default']
     IMynauiSearch: typeof import('~icons/mynaui/search')['default']

@@ -86,23 +86,32 @@ const connectPatient = async (file: File) => {
 };
 
 const parsedAnalysis = computed(() => {
-    const sections = patient.value.analysis.split("**").filter(Boolean);
+    const lines = patient.value.analysis
+        .split("\n")
+        .map((line: string) => line.trim())
+        .filter(Boolean);
     const htmlParts = [];
 
-    for (let i = 0; i < sections.length; i += 2) {
-        const title = sections[i].replace(":", "").trim();
-        const body = sections[i + 1] || "";
-        const bullets = body
-            .split("\n")
-            .map((line: string) => line.trim())
-            .filter((line: string) => line.startsWith("*"))
-            .map((line: string) => line.replace(/^\*+/, "").trim());
-
-        htmlParts.push(
-            `<h3 class="text-lg font-semibold">${title}</h3><ul class="pl-4">${bullets
-                .map((b: string) => `<li class="text-gray-500">${b}</li>`)
-                .join("")}</ul>`
-        );
+    for (const line of lines) {
+        if (line.startsWith("*")) {
+            const match =
+                line.match(/\*\*\s*(.*?)\s*:\s*\*\*\s*(.*)/) ||
+                line.match(/\*\*\s*(.*?)\s*:\s*(.*)/);
+            if (match) {
+                const title = match[1].trim();
+                const content = match[2].trim();
+                htmlParts.push(
+                    `<h3 class="text-lg font-semibold">${title}</h3><p class="pl-4 text-gray-500">${content}</p>`
+                );
+            } else {
+                // fallback if no bold section
+                htmlParts.push(
+                    `<ul class="list-disc list-outside pl-8"><li class="text-gray-500">${line
+                        .replace(/^\*+/, "")
+                        .trim()}</li></ul>`
+                );
+            }
+        }
     }
 
     return htmlParts.join("");
@@ -170,11 +179,13 @@ onMounted(() => {
             <template v-else-if="connected && healthData.length">
                 <PatientHealthIndicators :data="healthData" />
 
-                <div class="mt-8 bg-gray-200 p-4 rounded-lg">
+                <div
+                    class="mt-8 backdrop-blur-sm bg-white/40 shadow-lg p-4 rounded-lg"
+                >
                     <h2
                         class="flex items-center gap-2 text-xl w-fit font-bold pb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500"
                     >
-                        <span>AI Patient Analysis</span>
+                        <span>AI Wound Analysis</span>
                         <i-mingcute:ai-fill class="text-2xl text-purple-500" />
                     </h2>
                     <div class="pl-4" v-html="parsedAnalysis"></div>

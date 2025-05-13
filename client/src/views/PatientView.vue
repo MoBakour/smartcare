@@ -170,7 +170,7 @@ onMounted(() => {
             <template v-else-if="connected && healthData.length">
                 <PatientHealthIndicators :data="healthData" />
 
-                <div class="mt-4 bg-gray-200 p-4 rounded-lg">
+                <div class="mt-8 bg-gray-200 p-4 rounded-lg">
                     <h2
                         class="flex items-center gap-2 text-xl w-fit font-bold pb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500"
                     >

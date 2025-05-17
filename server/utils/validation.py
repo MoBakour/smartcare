@@ -30,7 +30,7 @@ class WoundSchema(Schema):
         "Severe"
     ]))
     infected = fields.String(required=True, validate=validate.OneOf(["Yes", "No"]))
-    size = fields.Float(required=True, as_string=True)
+    size = fields.Float(required=True, as_string=True, validate=validate.Range(min=0))
     treatment = fields.String(required=True, validate=validate.OneOf([
         "Surgical Debridement",
         "Antibiotics (Oral)",

@@ -25,7 +25,11 @@ export const useAxios = () => {
             return response.data;
         } catch (err: any) {
             console.error(err);
-            error.value = err.response?.data?.error || err.message;
+            error.value =
+                err.response?.data?.error ||
+                err.message ||
+                err.error ||
+                "An error occurred";
         } finally {
             isLoading.value = false;
         }

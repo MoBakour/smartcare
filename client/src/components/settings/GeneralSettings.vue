@@ -43,27 +43,23 @@ const isUnchanged = computed(() => {
 });
 
 const handleSave = async () => {
-    try {
-        const formData = new FormData();
-        formData.append("username", username.value);
-        formData.append("email", email.value);
-        formData.append("password", password.value);
+    const formData = new FormData();
+    formData.append("username", username.value);
+    formData.append("email", email.value);
+    formData.append("password", password.value);
 
-        if (avatarFile.value) {
-            formData.append("avatar", avatarFile.value);
-        }
+    if (avatarFile.value) {
+        formData.append("avatar", avatarFile.value);
+    }
 
-        const data = await request("/user/update", "PUT", formData);
+    const data = await request("/user/update", "PUT", formData);
 
-        if (data) {
-            authStore.setUser(data.user);
-            password.value = "";
+    if (data) {
+        authStore.setUser(data.user);
+        password.value = "";
 
-            // show toast
-            toast.success("Profile updated successfully");
-        }
-    } catch (err: any) {
-        console.error("Error saving settings:", err);
+        // show toast
+        toast.success("Profile updated successfully");
     }
 };
 </script>

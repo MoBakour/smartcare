@@ -7,6 +7,7 @@ from datetime import datetime, UTC
 from bson import ObjectId
 from utils.handlers import stream_avatar
 from utils.validation import validate_signup, ValidationError
+from utils.utils import allowed_file
 import os
 import uuid
 
@@ -120,9 +121,9 @@ def update_user():
                 if not avatar_file.content_type.startswith('image/'):
                     return jsonify({"error": "Avatar must be an image file"}), 400
                     
-                ext = os.path.splitext(avatar_file.filename)[1].lower()
-
-                if ext not in ALLOWED_IMAGE_EXTENSIONS:
+                ext = allowed_file(avatar_file.filename, ALLOWED_IMAGE_EXTENSIONS)
+                
+                if not ext:
                     return jsonify({"error": "Invalid image format. Allowed formats: JPG, JPEG, PNG, GIF"}), 400
 
                 avatar_filename = f"{uuid.uuid4()}{ext}"

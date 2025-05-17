@@ -60,3 +60,11 @@ Wound Type,Location,Severity,Infected,Patient Age,Wound Size (cm),Treatment Give
     except Exception as e:
         print(f"Error in AI analysis: {str(e)}")
         return {"error": str(e)}
+    
+
+
+
+# Helper function to check allowed file extensions
+def allowed_file(filename, allowed_extensions):
+    ext = os.path.splitext(filename)[1].lower()
+    return ext if ext in allowed_extensions else False

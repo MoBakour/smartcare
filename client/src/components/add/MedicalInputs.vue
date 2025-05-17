@@ -208,6 +208,7 @@ const updatePatientData = (key: string, value: any) => {
                                 )
                             "
                             type="number"
+                            min="0"
                             placeholder="Size"
                             class="rounded-md py-1.5 pl-10 bg-white outline-none text-sm w-full"
                         />

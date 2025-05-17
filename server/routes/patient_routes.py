@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from utils.validation import NewPatientSchema
 from utils.init_models import predict_healing, predict_infection
 from utils.handlers import stream_avatar
-from utils.utils import analyze_patient, format_data, calculate_healing_time
+from utils.utils import analyze_patient, format_data, calculate_healing_time, allowed_file
 import os
 import json
 import uuid
@@ -36,8 +36,9 @@ def add_patient():
                 if not avatar_file.content_type.startswith('image/'):
                     return jsonify({"error": "Avatar must be an image file"}), 400
                     
-                ext = os.path.splitext(avatar_file.filename)[1].lower()
-                if ext not in ALLOWED_IMAGE_EXTENSIONS:
+                ext = allowed_file(avatar_file.filename, ALLOWED_IMAGE_EXTENSIONS)
+
+                if not ext:
                     return jsonify({"error": "Invalid image format. Allowed formats: JPG, JPEG, PNG, GIF"}), 400
 
                 avatar_filename = f"{uuid.uuid4()}{ext}"
@@ -147,12 +148,6 @@ Make it possible to upload a csv file into the server.
 Rename it to a unique id and save it in the server filesystem somewhere.
 Connect it to the user by updating user document in the DB and adding a new field called "source" with the value of the file id.
 """
-# Helper function to check allowed file extensions
-def allowed_file(filename):
-    return True
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_SOURCE_EXTENSIONS
-
 
 # connect patient to data source
 @patient_bp.route("/connect/<string:patient_id>", methods=["POST"])
@@ -173,7 +168,7 @@ def connect_patient(patient_id):
             return jsonify({"error": "No file uploaded"}), 400
 
         # Process the file if it has an allowed extension
-        if allowed_file(file.filename):
+        if allowed_file(file.filename, ALLOWED_SOURCE_EXTENSIONS):
             filename = f"{patient_id}.csv"
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)

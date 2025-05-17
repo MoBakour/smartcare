@@ -6,7 +6,8 @@ const { request, isLoading, error } = useAxios();
 const patients = ref<IPatient[]>([]);
 
 const fetchPatients = async () => {
-    const response = await request("/patient/all", "GET", null);
+    const response = await request("/patient/all", "GET");
+
     if (response) {
         patients.value = response.patients
             .map((patient: IPatient) => {

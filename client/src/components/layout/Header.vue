@@ -30,7 +30,7 @@ watch(searchQuery, (newVal) => {
             return;
         }
 
-        const data = await request(`/patient/search/${query}`, "GET", null);
+        const data = await request(`/patient/search/${query}`, "GET");
 
         if (data) {
             searchResults.value = data.patients.map((patient: IPatient) => ({

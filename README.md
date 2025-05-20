@@ -69,6 +69,7 @@ DB_NAME = "smartcare"
 MONGO_URI = "mongodb+srv://<username>:<password>@<cluster>.mongodb.net"
 SECRET_KEY = "<some_secret_value>"
 GENAI_API_KEY = "<your_api_key>"
+PORT = 5000
 ```
 
 ### Frontend Setup
@@ -88,7 +89,7 @@ npm install
 3. Create a `.env` file in the client directory with the following variables:
 
 ```
-VITE_API_URL = "http://localhost:5173"
+VITE_API_URL = "http://localhost:5000"
 ```
 
 ## Running the Application

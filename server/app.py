@@ -21,6 +21,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = False
+PORT = int(os.environ.get('PORT')) or 5000
 
 # Configure Google Generative AI
 genai.configure(api_key=os.environ.get('GENAI_API_KEY'))
@@ -53,4 +54,4 @@ if __name__ == '__main__':
     initialize_models()
     
     print("Starting Flask server...")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=PORT)

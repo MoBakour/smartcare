@@ -68,10 +68,12 @@ const handleSave = async () => {
     <!-- form section -->
     <form
         @submit.prevent="handleSave"
-        class="flex flex-col flex-1 mt-10 mx-auto"
+        class="flex flex-col flex-1 mt-10 mx-auto max-xs:mt-5"
     >
         <div class="w-fit">
-            <div class="flex items-start gap-10">
+            <div
+                class="flex items-start gap-10 max-xs:flex-col max-xs:items-center max-xs:gap-5"
+            >
                 <!-- avatar -->
                 <label
                     for="avatar"
@@ -131,7 +133,7 @@ const handleSave = async () => {
                     <div class="flex justify-end">
                         <button
                             type="submit"
-                            class="shadow-md mt-2 w-[200px] h-[38px] flex items-center justify-center bg-theme transition hover:opacity-80 text-white font-bold rounded-lg text-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+                            class="shadow-md mt-2 w-[200px] h-[38px] max-xs:w-[250px] flex items-center justify-center bg-theme transition hover:opacity-80 text-white font-bold rounded-lg text-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
                             :disabled="
                                 !username || !email || isUnchanged || isLoading
                             "

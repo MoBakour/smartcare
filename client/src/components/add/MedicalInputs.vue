@@ -23,9 +23,9 @@ const updatePatientData = (key: string, value: any) => {
     <div class="flex flex-col gap-4">
         <h2 class="text-gray-500 text-md font-semibold">Medical Information</h2>
 
-        <div class="flex gap-10">
+        <div class="flex gap-10 max-xs:gap-5">
             <!-- col 1 -->
-            <div class="flex flex-col gap-4 w-[140px]">
+            <div class="flex flex-col gap-4 w-[140px] max-xs:w-[120px]">
                 <!-- department -->
                 <div class="flex flex-col gap-1">
                     <label for="department" class="text-gray-600 text-sm"
@@ -137,7 +137,7 @@ const updatePatientData = (key: string, value: any) => {
             </div>
 
             <!-- col 2 -->
-            <div class="flex flex-col gap-4 w-[140px]">
+            <div class="flex flex-col gap-4 w-[140px] max-xs:w-[120px]">
                 <!-- blood type -->
                 <div class="flex flex-col gap-1">
                     <label for="bloodType" class="text-gray-600 text-sm"

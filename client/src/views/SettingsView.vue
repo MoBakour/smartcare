@@ -4,7 +4,7 @@ import CriticalSettings from "../components/settings/CriticalSettings.vue";
 </script>
 
 <template>
-    <div class="flex flex-col">
+    <div class="flex flex-col mb-10">
         <!-- page title -->
         <h1 class="flex items-center gap-2">
             <span class="text-2xl">Settings</span>

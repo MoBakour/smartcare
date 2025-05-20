@@ -55,7 +55,7 @@ const chartOptions = {
 
 <template>
     <div>
-        <p class="leading-[30px]">{{ props.label }}</p>
+        <p class="leading-[30px] whitespace-nowrap">{{ props.label }}</p>
         <div class="w-full h-[100px] relative">
             <Doughnut :data="chartData" :options="chartOptions" />
             <p

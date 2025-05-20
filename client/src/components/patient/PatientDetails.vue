@@ -5,7 +5,7 @@ defineProps<{ patient: IPatient }>();
 </script>
 
 <template>
-    <div class="flex gap-10">
+    <div class="flex gap-10 max-md:text-sm max-md:gap-6">
         <div class="flex gap-3">
             <div class="flex flex-col text-gray-500">
                 <span>Gender: </span>

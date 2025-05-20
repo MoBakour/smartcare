@@ -30,7 +30,7 @@ const showLogin = ref(true);
 
         <!-- auth form container -->
         <div
-            class="fixed right-0 w-3/5 flex flex-col items-center justify-center h-screen"
+            class="fixed right-0 w-3/5 max-md:w-full flex flex-col items-center justify-center min-h-screen max-md:relative max-md:py-5"
         >
             <Login v-if="showLogin" @switchToSignup="showLogin = false" />
             <Signup v-else @switchToLogin="showLogin = true" />

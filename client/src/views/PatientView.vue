@@ -160,7 +160,7 @@ onMounted(() => {
 
             <div
                 v-else-if="patient"
-                class="w-full flex items-center justify-between"
+                class="w-full flex items-center justify-between max-sm:flex-col max-sm:gap-4"
             >
                 <PatientMainInfo :patient="patient" />
                 <PatientDetails :patient="patient" />

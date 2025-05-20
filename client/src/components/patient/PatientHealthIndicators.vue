@@ -63,16 +63,18 @@ const healingColor = computed(() => {
 </script>
 
 <template>
-    <div class="grid grid-cols-4 grid-rows-2 gap-y-4 gap-x-8 mt-8">
+    <div
+        class="grid grid-cols-4 grid-rows-2 items-center gap-y-4 gap-x-8 mt-8 max-[900px]:grid-cols-2 max-[900px]:grid-rows-4 max-[900px]:gap-x-0 max-[400px]:grid-cols-1 max-[400px]:grid-rows-6"
+    >
         <!-- timeline -->
         <Timeline
-            class="col-span-3 flex flex-col items-start gap-2"
+            class="col-span-3 flex flex-col items-start gap-2 max-[900px]:col-span-2 max-[400px]:col-span-1"
             :data="props.data"
         />
 
         <!-- temperature -->
         <Number
-            class="row-start-2 flex flex-col items-center gap-2"
+            class="row-start-2 flex flex-col items-center gap-2 max-[900px]:row-start-3 max-[900px]:col-start-1 max-[400px]:row-start-4 max-[400px]:col-start-1"
             :label="`Wound Temperature`"
             :num="formatNumber(lastData['Wound Temperature'])"
             :temp="true"
@@ -82,7 +84,7 @@ const healingColor = computed(() => {
 
         <!-- ph -->
         <Number
-            class="row-start-2 flex flex-col items-center gap-2"
+            class="row-start-2 flex flex-col items-center gap-2 max-[900px]:row-start-3 max-[900px]:col-start-2 h-fit max-[400px]:row-start-5 max-[400px]:col-start-1"
             :label="`Wound pH`"
             :num="formatNumber(lastData['Wound pH'])"
             :unit="`pH`"
@@ -91,7 +93,7 @@ const healingColor = computed(() => {
 
         <!-- healing -->
         <Number
-            class="row-start-2 flex flex-col items-center gap-2"
+            class="row-start-2 flex flex-col items-center gap-2 max-[900px]:row-start-4 max-[900px]:col-start-1 max-[400px]:row-start-6 max-[400px]:col-start-1"
             :label="`Time to Heal`"
             :num="Math.round(lastData['Healing Time'])"
             :unit="`days`"
@@ -100,14 +102,14 @@ const healingColor = computed(() => {
 
         <!-- moisture -->
         <Percentage
-            class="col-start-4 flex flex-col items-center gap-2"
+            class="col-start-4 flex flex-col items-center gap-2 max-[900px]:row-start-2 max-[900px]:col-start-1 max-[400px]:row-start-2 max-[400px]:col-start-1"
             :label="`Moisture Level %`"
             :percentage="formatNumber(lastData['Moisture Level'])"
         />
 
         <!-- drug -->
         <Percentage
-            class="col-start-4 flex flex-col items-center gap-2"
+            class="col-start-4 flex flex-col items-center gap-2 max-[900px]:row-start-2 max-[900px]:col-start-2 max-[400px]:row-start-3 max-[400px]:col-start-1"
             :label="`Drug Release %`"
             :percentage="formatNumber(lastData['Drug Release'])"
         />

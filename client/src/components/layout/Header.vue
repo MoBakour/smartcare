@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useAuthStore } from "../../stores/auth.store";
 import { useAxios } from "../../composables/useAxios";
+import { useCommonStore } from "../../stores/common.store";
 import { computed, ref, watch } from "vue";
 
 const authStore = useAuthStore();
+const commonStore = useCommonStore();
 const { request } = useAxios();
 
 const username = computed(() => {
@@ -69,22 +71,32 @@ const handleKeydown = (e: KeyboardEvent) => {
 </script>
 
 <template>
-    <header class="w-full py-5 mb-5 flex justify-between items-center">
+    <header
+        class="w-full py-5 mb-5 max-sm:py-4 max-sm:mb-3 flex justify-between items-center"
+    >
         <!-- search -->
-        <div class="relative flex items-center gap-1 z-5">
-            <i-lets-icons-search-light class="text-2xl" />
+        <div class="relative flex items-center flex-wrap gap-1 z-5">
+            <!-- sidebar toggle -->
+            <div
+                class="lg:hidden mr-5 max-sm:mr-3 max-xs:mr-2 cursor-pointer transition hover:opacity-70"
+                @click="commonStore.setSidebarOpen(true)"
+            >
+                <i-mdi-menu class="text-2xl max-sm:text-xl" />
+            </div>
+
+            <i-lets-icons-search-light class="text-2xl max-sm:text-xl" />
             <input
                 type="text"
                 v-model="searchQuery"
                 placeholder="Search Patients Here..."
-                class="rounded-md px-2 py-1 outline-none"
+                class="rounded-md px-2 py-1 outline-none max-sm:text-sm max-sm:px-1 max-sm:py-0.5 max-xs:w-[110px]"
                 @keydown="handleKeydown"
             />
 
             <!-- search results -->
             <div
                 v-if="searchResults.length > 0"
-                class="absolute -bottom-2 left-0 translate-y-full w-full p-2 bg-white shadow-lg rounded-md flex flex-col gap-1"
+                class="absolute -bottom-2 left-0 translate-y-full w-[280px] max-sm:w-[250px] max-xs:w-[220px] p-2 bg-white shadow-lg rounded-md flex flex-col gap-1"
             >
                 <a
                     v-for="(patient, index) in searchResults"
@@ -96,7 +108,7 @@ const handleKeydown = (e: KeyboardEvent) => {
                     ]"
                 >
                     <div
-                        class="w-8 h-8 rounded-full bg-[#D9D9D9] flex items-center justify-center overflow-hidden"
+                        class="w-8 h-8 min-w-8 rounded-full bg-[#D9D9D9] flex items-center justify-center overflow-hidden"
                     >
                         <img
                             v-if="patient.avatar"
@@ -112,13 +124,13 @@ const handleKeydown = (e: KeyboardEvent) => {
         </div>
 
         <!-- user -->
-        <div class="flex items-center gap-4">
-            <p class="text-lg">
+        <div class="flex items-center gap-4 max-sm:gap-3">
+            <p class="text-lg max-sm:text-base">
                 <span>Dr. </span>
                 <span>{{ username }}</span>
             </p>
             <div
-                class="w-[40px] h-[40px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
+                class="w-[40px] h-[40px] min-w-[40px] max-sm:w-[30px] max-sm:h-[30px] max-sm:min-w-[30px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
             >
                 <img
                     v-if="authStore.user?.avatar"
@@ -126,7 +138,7 @@ const handleKeydown = (e: KeyboardEvent) => {
                     alt="avatar"
                     class="w-full h-full object-cover"
                 />
-                <i-solar-user-outline v-else class="text-2xl" />
+                <i-solar-user-outline v-else class="text-2xl max-sm:text-xl" />
             </div>
         </div>
     </header>

@@ -29,6 +29,7 @@ const isActive = (path: string, nested: boolean = false) => {
 
 const handleLogout = () => {
     authStore.logout();
+    commonStore.setSidebarOpen(false);
     router.push("/auth");
 };
 
@@ -36,6 +37,10 @@ const greeting = new Date().getHours() < 12 ? "Good Morning" : "Good Evening";
 
 const username = computed(() => {
     return authStore.user?.username.split(" ")[0];
+});
+
+const sidebarOpen = computed(() => {
+    return commonStore.sidebarOpen;
 });
 </script>
 
@@ -47,9 +52,20 @@ const username = computed(() => {
                 isCritical,
         }"
     >
-        <!-- side bar -->
+        <!-- responsive sidebar dark overlay -->
         <div
-            class="sidebar sticky top-0 left-0 h-screen flex flex-col gap-8 bg-[#D9D9D9] w-[300px] rounded-tr-[50px] overflow-hidden"
+            class="fixed inset-0 bg-black/70 z-10 transition-all backdrop-blur-xs"
+            :class="{ 'opacity-0 pointer-events-none': !sidebarOpen }"
+            @click="commonStore.setSidebarOpen(false)"
+        ></div>
+
+        <!-- sidebar -->
+        <div
+            class="sidebar sticky top-0 left-0 h-screen flex flex-col gap-8 bg-[#D9D9D9] w-[300px] max-lg:absolute rounded-tr-[50px] overflow-hidden z-10 transition-all"
+            :class="{
+                'max-lg:translate-x-0': sidebarOpen,
+                'max-lg:-translate-x-full': !sidebarOpen,
+            }"
         >
             <!-- top -->
             <div>
@@ -94,6 +110,7 @@ const username = computed(() => {
                                     ? 'opacity-100'
                                     : 'opacity-60'
                             "
+                            @click="commonStore.setSidebarOpen(false)"
                         >
                             <div
                                 class="transition-all h-[5px] rounded-r-[100px] bg-black"
@@ -123,6 +140,7 @@ const username = computed(() => {
                                     ? 'opacity-100'
                                     : 'opacity-60'
                             "
+                            @click="commonStore.setSidebarOpen(false)"
                         >
                             <div
                                 class="transition-all h-[5px] rounded-r-[100px] bg-black"
@@ -146,6 +164,7 @@ const username = computed(() => {
                                     ? 'opacity-100'
                                     : 'opacity-60'
                             "
+                            @click="commonStore.setSidebarOpen(false)"
                         >
                             <div
                                 class="transition-all h-[5px] rounded-r-[100px] bg-black"
@@ -198,9 +217,11 @@ const username = computed(() => {
         </div>
 
         <!-- page content -->
-        <div class="px-12 flex-1">
+        <div class="px-12 max-md:px-6 max-xs:px-4 flex-1">
             <Header />
-            <RouterView />
+            <div class="max-w-[900px] mx-auto">
+                <RouterView />
+            </div>
         </div>
     </div>
 </template>

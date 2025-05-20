@@ -43,7 +43,7 @@ const emit = defineEmits(["switchToLogin"]);
 <template>
     <form
         @submit.prevent="handleSubmit"
-        class="flex flex-col items-center justify-center gap-5 w-[260px]"
+        class="flex flex-col items-center justify-center gap-5 w-[260px] max-lg:bg-white/50 max-lg:backdrop-blur-sm max-lg:shadow-md max-lg:rounded-xl max-lg:w-[300px] max-lg:p-5"
     >
         <!-- user default avatar -->
         <div

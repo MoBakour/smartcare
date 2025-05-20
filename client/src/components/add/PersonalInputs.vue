@@ -40,7 +40,7 @@ const updatePatientData = (key: string, value: any) => {
 
         <!-- avatar -->
         <label
-            class="w-[80px] h-[80px] bg-[#D9D9D9] m-auto rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition"
+            class="w-[80px] h-[80px] max-w-[80px] bg-[#D9D9D9] m-auto rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition"
             title="Upload Profile Picture"
             for="avatar"
         >

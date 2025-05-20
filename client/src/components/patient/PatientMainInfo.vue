@@ -20,22 +20,24 @@ const isCritical = computed(() => {
 </script>
 
 <template>
-    <div class="flex items-center gap-6">
+    <div class="flex items-center gap-6 max-md:gap-3">
         <div
-            class="w-[100px] h-[100px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
+            class="w-[100px] h-[100px] min-w-[100px] max-md:w-[80px] max-md:h-[80px] max-md:min-w-[80px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
         >
             <img
                 v-if="avatarUrl"
                 :src="avatarUrl"
                 class="w-full h-full object-cover"
             />
-            <i-solar-user-outline v-else class="text-6xl" />
+            <i-solar-user-outline v-else class="text-6xl max-md:text-4xl" />
         </div>
-        <div class="flex flex-col gap-1">
-            <p class="text-gray-400 text-sm">#{{ patient._id }}</p>
-            <p class="text-3xl font-bold">{{ patient.name }}</p>
+        <div class="flex flex-col gap-1 max-md:gap-0.25">
+            <p class="text-gray-400 text-sm max-md:text-xs">
+                #{{ patient._id }}
+            </p>
+            <p class="text-3xl max-md:text-xl font-bold">{{ patient.name }}</p>
 
-            <div>
+            <div class="max-md:text-sm">
                 <p class="flex gap-3 font-medium">
                     <span
                         >{{ patient.wound.severity }}

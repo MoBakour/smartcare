@@ -9,3 +9,7 @@ export const formatDate = (date: Date) => {
 export const formatNumber = (num: number) => {
     return Number(num.toFixed(2));
 };
+
+export const capitalize = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};

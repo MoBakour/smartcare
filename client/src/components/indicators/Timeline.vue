@@ -65,13 +65,13 @@ const chartOptions = {
 
 <template>
     <div>
-        <div class="flex items-center w-full justify-between">
+        <div class="flex items-center w-full justify-between max-sm:flex-col">
             <p class="text-xl font-semibold leading-[30px]">
                 Health Status Timeline
             </p>
 
             <!-- switches -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
                 <button
                     class="px-2 py-1 rounded-sm text-xs bg-[#f97316] text-white hover:bg-[#f97316]/80 transition-all cursor-pointer"
                     @click="activeIndicator = 'Wound Temperature'"

@@ -49,7 +49,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-    <div class="flex flex-col">
+    <div class="flex flex-col mb-10">
         <!-- page title -->
         <h1 class="flex items-center gap-2">
             <span class="text-2xl">Add Patient</span>
@@ -59,7 +59,7 @@ const handleSubmit = async () => {
         <!-- form -->
         <form
             @submit.prevent="handleSubmit"
-            class="flex flex-col flex-1 mt-10 mx-auto"
+            class="flex flex-col flex-1 mt-10 max-md:mt-5 mx-auto"
         >
             <!-- error message -->
             <div
@@ -70,17 +70,17 @@ const handleSubmit = async () => {
             </div>
 
             <!-- personal + medical info sections -->
-            <div class="flex justify-between items-start gap-10">
+            <div
+                class="flex justify-between items-start gap-10 max-md:flex-col max-md:items-center max-md:gap-5"
+            >
                 <!-- personal info -->
                 <PersonalInputs v-model="patientData" />
 
-                <!-- border -->
-                <div
-                    class="w-[2px] h-[300px] rounded-4xl self-center bg-gray-300"
-                />
-
                 <!-- medical info -->
-                <MedicalInputs v-model="patientData" />
+                <MedicalInputs
+                    v-model="patientData"
+                    class="border-l-2 border-gray-300 pl-10 max-md:border-l-0 max-md:border-t-2 max-md:pl-0 max-md:pt-5"
+                />
             </div>
 
             <!-- submit button -->

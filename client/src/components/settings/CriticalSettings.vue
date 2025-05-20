@@ -22,6 +22,23 @@ const {
 const showPopup = ref(false);
 const popupType = ref<"data" | "account">("data");
 
+const settings = {
+    data: {
+        title: "Clear Patient Data",
+        description:
+            "Delete all data related to all patients recorded on the system.",
+        button: "Clear Data",
+        type: "data",
+    },
+    account: {
+        title: "Delete Account",
+        description:
+            "Delete your account and all associated data, including all patient data.",
+        button: "Delete Account",
+        type: "account",
+    },
+};
+
 const handleClearData = async () => {
     await requestClearData("/patient/deleteall", "DELETE");
 
@@ -57,47 +74,26 @@ const handleDeleteAccount = async () => {
     <div class="mt-12 flex flex-col gap-8 mx-auto w-full">
         <h2 class="text-crimson text-xl font-bold">Critical Settings</h2>
 
-        <!-- clear patient data -->
-        <div class="flex justify-between items-center">
+        <div
+            v-for="setting in settings"
+            class="flex justify-between items-center max-md:flex-col max-md:items-start max-md:gap-4"
+        >
             <div class="flex flex-col">
-                <p class="font-bold">Clear Patient Data</p>
+                <p class="font-bold">{{ setting.title }}</p>
                 <p class="text-sm text-gray-600">
-                    Delete all data related to all patients recorded on the
-                    system.
+                    {{ setting.description }}
                 </p>
             </div>
             <button
                 @click="
                     () => {
                         showPopup = true;
-                        popupType = 'data';
+                        popupType = setting.type;
                     }
                 "
                 class="shadow-xl w-[180px] bg-crimson text-white font-semibold text-sm px-6 py-2 rounded-lg hover:opacity-80 transition cursor-pointer"
             >
-                Clear Data
-            </button>
-        </div>
-
-        <!-- delete account -->
-        <div class="flex justify-between items-center">
-            <div class="flex flex-col">
-                <p class="font-bold">Delete Account</p>
-                <p class="text-sm text-gray-600">
-                    Delete your account and all associated data, including all
-                    patient data.
-                </p>
-            </div>
-            <button
-                @click="
-                    () => {
-                        showPopup = true;
-                        popupType = 'account';
-                    }
-                "
-                class="shadow-xl w-[180px] bg-crimson text-white font-semibold text-sm px-6 py-2 rounded-lg hover:opacity-80 transition cursor-pointer"
-            >
-                Delete Account
+                {{ setting.button }}
             </button>
         </div>
     </div>
@@ -134,7 +130,9 @@ const handleDeleteAccount = async () => {
                             ? handleClearData()
                             : handleDeleteAccount()
                     "
-                    title="Clear Data"
+                    :title="
+                        popupType === 'data' ? 'Clear Data' : 'Delete Account'
+                    "
                 >
                     {{ popupType === "data" ? "Clear Data" : "Delete Account" }}
                 </button>

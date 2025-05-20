@@ -76,12 +76,15 @@ onMounted(() => {
     </p>
 
     <!-- patients list -->
-    <div v-else class="mt-10 mb-15 flex flex-col items-center gap-6">
+    <div
+        v-else
+        class="mt-10 mb-15 max-sm:mt-8 max-sm:mb-10 flex flex-col items-center gap-6"
+    >
         <router-link
             :to="`/patients/${patient._id}`"
             v-for="patient in patients"
             :key="patient._id"
-            class="w-[80%] p-6 shadow-xl rounded-2xl flex items-center bg-gradient-to-r transition-all hover:w-[82%] cursor-pointer"
+            class="w-[80%] max-sm:w-[90%] max-xs:w-[98%] p-6 max-sm:p-4 shadow-xl rounded-2xl flex gap-6 max-sm:gap-4 max-xs:gap-2 items-center bg-gradient-to-r transition-all hover:w-[82%] max-sm:hover:w-[92%] max-xs:hover:w-[100%] cursor-pointer"
             :class="
                 patient.wound.severity === 'Severe'
                     ? 'from-crimson/35 to-crimson/15'
@@ -90,7 +93,7 @@ onMounted(() => {
         >
             <!-- user avatar -->
             <div
-                class="w-[80px] h-[80px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
+                class="w-[80px] h-[80px] min-w-[80px] max-sm:w-[70px] max-sm:h-[70px] max-sm:min-w-[70px] max-xs:w-[60px] max-xs:h-[60px] max-xs:min-w-[60px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
             >
                 <img
                     v-if="patient.avatar"
@@ -101,10 +104,12 @@ onMounted(() => {
             </div>
 
             <!-- user details -->
-            <div class="flex flex-col ml-6">
-                <p class="text-2xl font-semibold">{{ patient.name }}</p>
+            <div class="flex flex-col">
+                <p class="text-2xl max-sm:text-xl max-xs:text-lg font-semibold">
+                    {{ patient.name }}
+                </p>
                 <p
-                    class="font-bold flex gap-3"
+                    class="font-bold flex gap-3 max-sm:gap-2 max-sm:text-sm max-xs:text-xs"
                     :class="
                         patient.wound.severity === 'Severe'
                             ? 'text-crimson'

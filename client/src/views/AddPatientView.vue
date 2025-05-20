@@ -4,7 +4,6 @@ import PersonalInputs from "../components/add/PersonalInputs.vue";
 import MedicalInputs from "../components/add/MedicalInputs.vue";
 import { useAxios } from "../composables/useAxios";
 import { useRouter } from "vue-router";
-import { toast } from "vue3-toastify";
 
 const { request, isLoading, error } = useAxios();
 const router = useRouter();

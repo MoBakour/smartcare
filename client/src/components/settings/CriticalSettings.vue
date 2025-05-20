@@ -22,7 +22,14 @@ const {
 const showPopup = ref(false);
 const popupType = ref<"data" | "account">("data");
 
-const settings = {
+interface Settings {
+    title: string;
+    description: string;
+    button: string;
+    type: "data" | "account";
+}
+
+const settings: Record<string, Settings> = {
     data: {
         title: "Clear Patient Data",
         description:

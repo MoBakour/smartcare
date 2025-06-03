@@ -19,9 +19,5 @@ env/
 *.swp
 *.swo
 
-# Model files
-*.pkl
-models/
-
 # Uploads
 uploads/

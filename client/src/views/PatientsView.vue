@@ -98,7 +98,7 @@ onMounted(() => {
                 <img
                     v-if="patient.avatar"
                     :src="patient.avatar"
-                    onerror="this.src='/avatar.jpg'"
+                    onerror="this.src='/avatar.png'"
                     class="w-full h-full object-cover"
                 />
                 <i-solar-user-outline v-else class="text-5xl" />

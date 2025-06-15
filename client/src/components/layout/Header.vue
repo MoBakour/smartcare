@@ -113,7 +113,7 @@ const handleKeydown = (e: KeyboardEvent) => {
                         <img
                             v-if="patient.avatar"
                             :src="patient.avatar"
-                            onerror="this.src='/avatar.jpg'"
+                            onerror="this.src='/avatar.png'"
                             alt="avatar"
                             class="w-full h-full object-cover"
                         />
@@ -136,7 +136,7 @@ const handleKeydown = (e: KeyboardEvent) => {
                 <img
                     v-if="authStore.user?.avatar"
                     :src="avatarUrl"
-                    onerror="this.src='/avatar.jpg'"
+                    onerror="this.src='/avatar.png'"
                     alt="avatar"
                     class="w-full h-full object-cover"
                 />

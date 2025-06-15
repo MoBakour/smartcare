@@ -27,7 +27,7 @@ const isCritical = computed(() => {
             <img
                 v-if="avatarUrl"
                 :src="avatarUrl"
-                onerror="this.src='/avatar.jpg'"
+                onerror="this.src='/avatar.png'"
                 class="w-full h-full object-cover"
             />
             <i-solar-user-outline v-else class="text-6xl max-md:text-4xl" />

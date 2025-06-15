@@ -2,7 +2,21 @@
 import { ref } from "vue";
 import { capitalize } from "../utils/utils";
 
-const data = ref([
+interface Member {
+    name: string;
+    id: string;
+    role: string;
+    image?: string;
+    link?: string;
+}
+
+interface Team {
+    team: string;
+    bg: string;
+    members: Member[];
+}
+
+const data = ref<Team[]>([
     {
         team: "software",
         bg: "from-blue-400 to-purple-600",

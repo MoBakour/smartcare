@@ -25,12 +25,10 @@ const isCritical = computed(() => {
             class="w-[100px] h-[100px] min-w-[100px] max-md:w-[80px] max-md:h-[80px] max-md:min-w-[80px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
         >
             <img
-                v-if="avatarUrl"
-                :src="avatarUrl"
+                :src="avatarUrl || '/avatar.png'"
                 onerror="this.src='/avatar.png'"
                 class="w-full h-full object-cover"
             />
-            <i-solar-user-outline v-else class="text-6xl max-md:text-4xl" />
         </div>
         <div class="flex flex-col gap-1 max-md:gap-0.25">
             <p class="text-gray-400 text-sm max-md:text-xs">

@@ -79,17 +79,12 @@ const handleSave = async () => {
                     for="avatar"
                     class="shadow-lg w-[120px] h-[120px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition"
                 >
-                    <template v-if="avatarPreview || authStore.user?.avatar">
-                        <img
-                            :src="avatarPreview || avatarUrl"
-                            onerror="this.src='/avatar.png'"
-                            alt="Profile Preview"
-                            class="w-full h-full object-cover"
-                        />
-                    </template>
-                    <template v-else>
-                        <i-solar-user-outline class="text-5xl" />
-                    </template>
+                    <img
+                        :src="avatarPreview || avatarUrl || '/avatar.png'"
+                        onerror="this.src='/avatar.png'"
+                        alt="Profile Preview"
+                        class="w-full h-full object-cover"
+                    />
                 </label>
 
                 <!-- hidden file input -->

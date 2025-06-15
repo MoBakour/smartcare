@@ -111,13 +111,11 @@ const handleKeydown = (e: KeyboardEvent) => {
                         class="w-8 h-8 min-w-8 rounded-full bg-[#D9D9D9] flex items-center justify-center overflow-hidden"
                     >
                         <img
-                            v-if="patient.avatar"
-                            :src="patient.avatar"
+                            :src="patient.avatar || '/avatar.png'"
                             onerror="this.src='/avatar.png'"
                             alt="avatar"
                             class="w-full h-full object-cover"
                         />
-                        <i-solar-user-outline v-else class="text-xl" />
                     </div>
                     <p>{{ patient.name }}</p>
                 </a>
@@ -134,13 +132,11 @@ const handleKeydown = (e: KeyboardEvent) => {
                 class="w-[40px] h-[40px] min-w-[40px] max-sm:w-[30px] max-sm:h-[30px] max-sm:min-w-[30px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
             >
                 <img
-                    v-if="authStore.user?.avatar"
-                    :src="avatarUrl"
+                    :src="avatarUrl || '/avatar.png'"
                     onerror="this.src='/avatar.png'"
                     alt="avatar"
                     class="w-full h-full object-cover"
                 />
-                <i-solar-user-outline v-else class="text-2xl max-sm:text-xl" />
             </div>
         </div>
     </header>

@@ -39,9 +39,9 @@ const emit = defineEmits(["switchToSignup"]);
     >
         <!-- user default avatar -->
         <div
-            class="w-[120px] h-[120px] bg-[#D9D9D9] rounded-full flex items-center justify-center"
+            class="w-[120px] h-[120px] bg-[#D9D9D9] rounded-full overflow-hidden flex items-center justify-center"
         >
-            <i-solar-user-outline class="text-7xl" />
+            <i-solar-user-outline class="text-6xl" />
         </div>
         <p class="font-bold text-xl">Healthcare Provider Login</p>
 

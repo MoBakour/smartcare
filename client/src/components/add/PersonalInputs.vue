@@ -44,16 +44,11 @@ const updatePatientData = (key: string, value: any) => {
             title="Upload Profile Picture"
             for="avatar"
         >
-            <template v-if="modelValue.avatarPreview">
-                <img
-                    :src="modelValue.avatarPreview"
-                    alt="Profile Preview"
-                    class="w-full h-full object-cover"
-                />
-            </template>
-            <template v-else>
-                <i-solar-user-outline class="text-4xl" />
-            </template>
+            <img
+                :src="modelValue.avatarPreview || '/avatar.png'"
+                alt="Profile Preview"
+                class="w-full h-full object-cover"
+            />
         </label>
 
         <!-- hidden file input -->

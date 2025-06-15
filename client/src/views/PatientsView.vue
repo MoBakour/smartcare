@@ -96,12 +96,10 @@ onMounted(() => {
                 class="w-[80px] h-[80px] min-w-[80px] max-sm:w-[70px] max-sm:h-[70px] max-sm:min-w-[70px] max-xs:w-[60px] max-xs:h-[60px] max-xs:min-w-[60px] bg-[#D9D9D9] rounded-full flex items-center justify-center overflow-hidden"
             >
                 <img
-                    v-if="patient.avatar"
-                    :src="patient.avatar"
+                    :src="patient.avatar || '/avatar.png'"
                     onerror="this.src='/avatar.png'"
                     class="w-full h-full object-cover"
                 />
-                <i-solar-user-outline v-else class="text-5xl" />
             </div>
 
             <!-- user details -->

@@ -82,6 +82,7 @@ const handleSave = async () => {
                     <template v-if="avatarPreview || authStore.user?.avatar">
                         <img
                             :src="avatarPreview || avatarUrl"
+                            onerror="this.src='/avatar.jpg'"
                             alt="Profile Preview"
                             class="w-full h-full object-cover"
                         />
